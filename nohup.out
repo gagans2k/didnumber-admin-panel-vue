@@ -1,0 +1,12 @@
+PING apts.didnpbx.com (149.56.5.173) 56(84) bytes of data.
+64 bytes from offbiz.didnpbx.com (149.56.5.173): icmp_seq=1 ttl=64 time=0.008 ms
+64 bytes from offbiz.didnpbx.com (149.56.5.173): icmp_seq=2 ttl=64 time=0.022 ms
+64 bytes from offbiz.didnpbx.com (149.56.5.173): icmp_seq=3 ttl=64 time=0.022 ms
+64 bytes from offbiz.didnpbx.com (149.56.5.173): icmp_seq=4 ttl=64 time=0.023 ms
+64 bytes from offbiz.didnpbx.com (149.56.5.173): icmp_seq=5 ttl=64 time=0.035 ms
+64 bytes from offbiz.didnpbx.com (149.56.5.173): icmp_seq=6 ttl=64 time=0.042 ms
+64 bytes from offbiz.didnpbx.com (149.56.5.173): icmp_seq=7 ttl=64 time=0.034 ms
+64 bytes from offbiz.didnpbx.com (149.56.5.173): icmp_seq=8 ttl=64 time=0.034 ms
+64 bytes from offbiz.didnpbx.com (149.56.5.173): icmp_seq=9 ttl=64 time=0.021 ms
+64 bytes from offbiz.didnpbx.com (149.56.5.173): icmp_seq=10 ttl=64 time=0.021 ms
+64 bytes from offbiz.didnpbx.com (149.56.5.173): icmp_seq=11 ttl=64 time=0.035 ms

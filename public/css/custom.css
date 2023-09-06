@@ -1,0 +1,125 @@
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.v-application {
+    font-family: 'Poppins', sans-serif !important;
+}
+
+.subtitle-text {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 1rem !important;
+}
+
+.title-text {
+    font-size: 1.25rem !important;
+}
+
+.v-application a {
+    color: #398bf7;
+    text-decoration: none;
+}
+
+.v-application a.link {
+    color: #455a64;
+}
+
+.page-content {
+    background-color: rgb(236, 236, 236);
+}
+
+.theme--light.v-input--is-disabled input,
+.theme--light.v-input--is-disabled textarea {
+    color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.login-panel {
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+.login-panel .form-card {
+    border-radius: 8px;
+}
+
+.header-font {
+    font-size: 24px !important;
+}
+
+.lstick {
+    width: 2px;
+    background: #398bf7;
+    height: 30px;
+    margin-left: -18px;
+    margin-right: 18px;
+    position: absolute;
+}
+
+.primary-btn {
+    text-transform: inherit !important;
+    color: #1976d2 !important;
+}
+
+.primary-btn:hover {
+    background-color: #1976d2 !important;
+    color: #fff !important;
+}
+
+.theme--dark.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled).light-font {
+    opacity: 0.5;
+}
+
+.light-fonts {
+    opacity: 0.5;
+}
+
+.user-info {
+    font-size: 17px !important;
+    font-weight: bold;
+}
+
+.v-data-table>.v-data-table__wrapper>table>tbody>tr>th,
+.v-data-table>.v-data-table__wrapper>table>thead>tr>th,
+.v-data-table>.v-data-table__wrapper>table>tfoot>tr>th {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+}
+
+.theme--light.v-data-table>.v-data-table__wrapper>table>thead>tr:last-child>th {
+    background-color: #f7fafc;
+    color: #718096;
+    opacity: 1;
+}
+
+.v-data-table>.v-data-table__wrapper>table>tbody>tr>td,
+.v-data-table>.v-data-table__wrapper>table>thead>tr>td,
+.v-data-table>.v-data-table__wrapper>table>tfoot>tr>td {
+    height: 58px !important;
+}
+
+.theme--light.v-data-table .v-data-table-header th.sortable:hover,
+.theme--light.v-data-table .v-data-table-header th.sortable.active {
+    color: #718096 !important;
+}
+
+.theme--dark.v-list-item--active:hover::before,
+.theme--dark.v-list-item--active::before {
+    border-radius: 3px;
+}
+
+.v-alert span h3 {
+    padding-bottom: 10px;
+}
+
+.order-info h3 {
+    padding-bottom: 10px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
