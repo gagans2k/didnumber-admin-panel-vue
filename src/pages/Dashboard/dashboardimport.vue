@@ -121,6 +121,19 @@
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="uploadLocationCsv"> UPLOAD </v-btn>
           </v-row>
+          <v-dialog v-model="showErrorText" max-width="400">
+            <v-card>
+              <v-card-title>Error</v-card-title>
+              <v-card-text>
+                <ul>
+                  <li v-for="(error, index) in errorList" :key="index">{{ error.error }}</li>
+                </ul>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn color="primary" @click="closeErrorDialog">Close</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-card-actions>
       </v-card>
     </v-col>
@@ -219,6 +232,8 @@ export default {
     imageUrl: "",
     imageFile: "",
     type: "",
+    errorList: [],
+    showErrorText: false
   }),
 
   methods: {
@@ -421,17 +436,20 @@ export default {
       base64Data.uploadedFile = this.rawData;
       try {
         let response = await dashboardAPI.importLocationDataCsv(base64Data);
-        if (response.responseMessage == "success") {
+        if (response.responseMessage == "success" && response.errorList.length == 0) {
           this.$root.$emit("SHOW_SNACKBAR", {
             text: "Recieved successfully",
             color: "success",
           });
           this.media.locationUpload = null;
-        } else if (responseMessage == "error") {
+        } else if (response.responseMessage == "success" && response.errorList.length > 0) {
+          this.errorList = response?.errorList;
+          this.showErrorDialog();
           this.seeSnackbar("Server Error", "error");
           this.$root.$emit("SHOW_SNACKBAR", {
-            text: "Server Error",
+            text: "Something wrong in csv file",
             color: "error",
+            
           });
         }
       } catch (error) {
@@ -442,6 +460,13 @@ export default {
           });
         }
       }
+    },
+
+    showErrorDialog() {
+      this.showErrorText = true;
+    },
+    closeErrorDialog() {
+      this.showErrorText = false;
     },
 
     // *********************** Download location ***********************
