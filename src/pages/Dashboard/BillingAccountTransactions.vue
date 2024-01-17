@@ -89,7 +89,7 @@
           <v-row>
             <v-col cols="4">
               <span class="subtitle-1 font-weight-bold"
-                >Current Balance:</span
+                >Balance After Approval:</span
               ></v-col
             >
             <v-col cols="6">
