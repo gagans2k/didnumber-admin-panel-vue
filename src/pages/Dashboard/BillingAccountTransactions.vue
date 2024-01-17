@@ -84,7 +84,37 @@
               }}</span>
             </v-col>
           </v-row>
+           <v-divider></v-divider>
+          <!-- CURRENT BALANCE -->
+          <v-row>
+            <v-col cols="4">
+              <span class="subtitle-1 font-weight-bold"
+                >Current Balance:</span
+              ></v-col
+            >
+            <v-col cols="6">
+              <span class="subtitle-1 font-weight-regular">{{
+                selectedItem.currentAmount
+              }}</span>
+            </v-col>
+          </v-row>
+          <v-divider></v-divider>
 
+          <v-divider></v-divider>
+          <!-- OLD BALANCE -->
+          <v-row>
+            <v-col cols="4">
+              <span class="subtitle-1 font-weight-bold"
+                >Old Balance:</span
+              ></v-col
+            >
+            <v-col cols="6">
+              <span class="subtitle-1 font-weight-regular">{{
+                selectedItem.oldAmount
+              }}</span>
+            </v-col>
+          </v-row>
+          <v-divider></v-divider>
           <v-divider></v-divider>
           <!-- PAYMENT GATEWAY ID -->
           <v-row v-if="dialogType == 'paypalTransactionDetails'">
