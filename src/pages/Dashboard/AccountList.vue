@@ -152,6 +152,22 @@
               </v-btn>
             </router-link>
           </template>
+          <!-- SWITCH enable disable status -->
+          <template v-slot:[`item.isVerified`]="{ item }">
+            <v-switch
+              v-if="item.isVerified == 'Y'"
+              :input-value="true"
+              color="primary"
+              @click="verifiedAccountForPayment('disabled', item)"
+              :readonly="true"
+            ></v-switch>
+            <v-switch
+              v-else
+              :input-value="false"
+              @click="verifiedAccountForPayment('enabled', item)"
+              :readonly="true"
+            ></v-switch>
+          </template>
         </v-data-table>
       </v-col>
     </v-row>
@@ -200,6 +216,8 @@ export default {
         { text: "Order's", value: "viewOrders", sortable: false },
         { text: "Current Amount", value: "currentAmount", width: "10%", sortable: false  },
         { text: "Account Detail's", value: "accountDetails", sortable: false },
+        { text: "Verified", value: "isVerified", sortable: false }
+
       ],
       totalItems: 0,
       options: {},
@@ -315,6 +333,31 @@ export default {
          let response = await this.postMethod("enableUser", {
           emailAddress: item.emailAddress,
           accountId: item.accountId,
+        });
+         if (response.responseMessage == "success") {
+          await this.getDataFromApi();
+          this.isLoading = false;
+        }
+      }
+    },
+
+    async verifiedAccountForPayment(message, item) {
+      if (message == "disabled") {
+       this.isLoading = true;
+       let response = await this.postMethod("verifiedAccountForPayment", {
+          isVerified: 'N',
+          partyId: item.partyId,
+        });
+        if (response.responseMessage == "success") {
+          await this.getDataFromApi();
+          this.isLoading = false;
+        }
+      }
+      else if (message == "enabled") {
+        this.isLoading = true;
+         let response = await this.postMethod("verifiedAccountForPayment", {
+          isVerified: 'Y',
+          partyId: item.partyId,
         });
          if (response.responseMessage == "success") {
           await this.getDataFromApi();
