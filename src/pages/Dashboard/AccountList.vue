@@ -18,6 +18,18 @@
      <!-- SEARCH BY NAME AND EMAIL -->
      <v-row>
       <!-- NAME-->
+       <v-col xs="12" sm="5" md="3">
+        <v-text-field
+          v-model="partyId"
+          append-icon="mdi-magnify"
+          label="Search by Party Id"
+          outlined
+          dense
+          hide-details
+          v-on:keyup.enter="getDataFromApi(search)"
+          @click:append="getDataFromApi(search)"
+        ></v-text-field>
+      </v-col>
       <v-col xs="12" sm="5" md="3">
         <v-text-field
           v-model="search"
@@ -194,6 +206,8 @@ export default {
       copyOfSearch: "",
       email: "",
       copyOfEmail: "",
+      partyId: "",
+      copyOfPartyId: "",
       items: [],
       headers: [
         {
@@ -202,6 +216,7 @@ export default {
           value: "indexNo",
           sortable: false 
         },
+        { text: "Party", value: "partyId", sortable: false  },
         {
           text: "First Name",
           align: "start",
@@ -269,6 +284,16 @@ export default {
         }
       }
     },
+    async partyId(val) {
+      if (this.partyId.length > 0) {
+        this.copyOfPartyId = this.partyId;
+      }
+      if (this.partyId.length == 0) {
+        if (this.copyOfPartyId.length > 0) {
+          this.copyOfPartyId = null;
+        }
+      }
+    },
   },
   // async mounted() {
   //   const { items, total } = await this.getDataFromApi();
@@ -282,6 +307,7 @@ export default {
         let response = await this.getMethod("getPartyandPersonList", {
           customerName: this.search,
           emailAddress: this.email,
+          partyId: this.partyId,
           // viewIndex: page,
           // viewSize: itemsPerPage,
         });
