@@ -78,6 +78,13 @@
           <template v-slot:[`item.orderType`]="{ item }">
             <span v-if="item.orderType == 'DID Purchase'">Purchase</span>
           </template>
+
+          <template v-slot:[`item.documentInfoId`]="{ item }">
+                <a href="javascript:void(0)" @click="getDocumentData(item)">{{
+                  item.documentInfoId
+                }}</a>
+              </template>
+
           <!-- View Order Detail -->
           <template v-slot:[`item.viewDetails`]="{ item }">
             <router-link
@@ -93,6 +100,14 @@
         </v-data-table>
       </v-col>
     </v-row>
+
+    <!-- view user identity data -->
+    <v-dialog v-model="viewUserDocumentList" max-width="90%">
+      <uploadDocumentsVue
+        :userDocumentInfo="userDocumentInfo"
+        @close-user-modal="closeUserModal"
+      />
+    </v-dialog>
   </v-container>
   </v-card>
 </template>
@@ -101,10 +116,13 @@ import AllApiCalls from "@/services/AllApiCalls";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 import moment from "moment";
+import uploadDocumentsVue from "../../components/uploadDocuments.vue";
+
 export default {
   mixins: [AllApiCalls],
   components: {
     Loading,
+    uploadDocumentsVue,
   },
   data() {
     return {
@@ -121,6 +139,7 @@ export default {
         { text: "Order ID", value: "orderId",sortable: false},
         { text: "Created", value: "orderDate" , width: "10%",sortable: false},
         { text: "Cost", value: "grandTotal",sortable: false},
+        { text: "Identity", value: "documentInfoId",sortable: false},
         { text: "Detail",value: "viewDetails",width:"5%" ,sortable: false},
       ],
       totalItems: 0,
@@ -135,6 +154,8 @@ export default {
         { key: "TERMINATED", value: "DID_TERMINATED" },
         { key: "ALL", value: "DID_ALL" },
       ],
+      userDocumentInfo: {},
+      viewUserDocumentList: false,
     };
   },
 
@@ -143,6 +164,9 @@ export default {
   // },
 
   watch: {
+     dialogEdit(val) {
+      val || this.closeEdit();
+    },
     options: {
       async handler() {
         this.isLoading = true;
@@ -203,6 +227,39 @@ export default {
       }
       
     },
+        //  get Document Info
+    async getDocumentData(getIdentity) {
+      this.isLoading = true;
+      let payloadApproveIdentity = {
+        partyId: getIdentity.partyId,
+        documentInfoId: getIdentity.documentInfoId,
+      };
+      try {
+        let response = await this.getMethod(
+          "getDocumentInfoForAdmin",
+          payloadApproveIdentity
+        );
+        
+        let username = {
+          name: response.name,
+        };
+
+        this.userDocumentInfo = {
+          ...response.documentInfoResult,
+          ...username,
+          ...response.outList[0],
+        };
+        this.viewUserDocumentList = true;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+        console.log("====error===", error);
+      }
+    },
+    closeUserModal() {
+      this.viewUserDocumentList = false;
+    },
+
   },
 };
 </script>

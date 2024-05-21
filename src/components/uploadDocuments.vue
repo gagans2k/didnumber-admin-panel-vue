@@ -109,13 +109,19 @@
         </v-col>
 
 
-        <v-col cols="12" sm="4" v-if="userDocumentInfo.documentInfoType == 'BUSINESS'">
+        <v-col cols="12" sm="4">
           <v-card-subtitle class="pa-0"> Incorporation Company: </v-card-subtitle>
           <v-card-title class="pa-0">
             {{ userDocumentInfo.incorporationCompany }}
           </v-card-title>
         </v-col>
       
+       <v-col cols="12" sm="4">
+          <v-card-subtitle class="pa-0">Contact Number: </v-card-subtitle>
+          <v-card-title class="pa-0">
+            {{ userDocumentInfo.countryCode }} - {{ userDocumentInfo.contactNumber }}
+          </v-card-title>
+        </v-col>
       </v-row>
 
       <v-col cols="12" sm="12" class="px-0">
