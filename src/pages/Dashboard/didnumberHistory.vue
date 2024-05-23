@@ -69,6 +69,11 @@
                     <template v-slot:[`item.firstName`]="{ item }">
                         {{item.firstName}} {{item.lastName}}
                     </template>
+                     <template v-slot:[`item.documentInfoId`]="{ item }">
+                      <a href="javascript:void(0)" @click="getDocumentData(item)">{{
+                        item.documentInfoId
+                      }}</a>
+                    </template>
                     <template v-slot:[`item.creationDate`]="{ item }">
                         {{ (item.creationDate).slice(0,10) }}
                     </template>
@@ -78,6 +83,26 @@
                     <template v-slot:[`item.nextRenewalDate`]="{ item }">
                         {{ new Date(item.nextRenewalDate).toLocaleDateString() }}
                     </template>
+                      <!-- View Order Detail -->
+                    <template v-slot:[`item.viewOrderDetail`]="{ item }">
+                      <router-link
+                        :to="{
+                          name: 'Order Detail',
+                          query: { orderId: item.orderId, partyId: item.partyId },
+                        }"
+                        style="text-decoration: none !important"
+                      >
+                        <v-btn
+                          x-small
+                          outlined
+                          fab
+                          class="mr-2"
+                          color="green"
+                          size="25"
+                          ><v-icon>visibility</v-icon></v-btn
+                        >
+                      </router-link>
+                    </template>
                     <!-- DIALOG BOX -DELETE ITEM -->
                     <template v-slot:[`item.viewAction`]="{ item }">
                       <v-icon @click="viewOrder(item)" color="info">visibility</v-icon>
@@ -85,16 +110,27 @@
             </v-data-table>
             </v-col>
         </v-row>
+         <!-- view user identity data -->
+        <v-dialog v-model="viewUserDocumentList" max-width="90%">
+          <uploadDocumentsVue
+            :userDocumentInfo="userDocumentInfo"
+            @close-user-modal="closeUserModal"
+          />
+        </v-dialog>
     </v-container>
 </template>
 <script>
     import AllApiCalls from "@/services/AllApiCalls";
     import Loading from "vue-loading-overlay";
     import "vue-loading-overlay/dist/vue-loading.css";
+    import moment from "moment";
+    import uploadDocumentsVue from "../../components/uploadDocuments.vue";
+
     export default {
       mixins: [AllApiCalls],
       components: {
         Loading,
+        uploadDocumentsVue,
       },
       data() {
         return {
@@ -110,6 +146,12 @@
               sortable: false,
               value: "indexNo",
             },
+             {
+              text: "Party Id",
+              align: "start",
+              sortable: false,
+              value: "partyId",
+            },
             {
               text: "User Name",
               align: "start",
@@ -121,6 +163,12 @@
               align: "start",
               sortable: false,
               value: "serialNumber",
+            },
+            {
+              text: "Identity",
+              align: "start",
+              sortable: false,
+              value: "documentInfoId",
             },
             {
               text: "Status",
@@ -145,13 +193,23 @@
               align: "start",
               sortable: false,
               value: "nextRenewalDate",
-            },
+            },  
+            {
+              text: "View Order Detail",
+              value: "viewOrderDetail",
+              sortable: false,
+            },        
           ],
           totalItems: 0,
           options: {},
+          userDocumentInfo: {},
+          viewUserDocumentList: false,
         };
       },
        watch: {
+        dialogEdit(val) {
+        val || this.closeEdit();
+        },
         options: {
           async handler() {
             this.isLoading = true;
@@ -187,9 +245,42 @@
         //     this.totalLiveCalls = response.liveCallsList;
         //   }
         },
+        //  get Document Info
+        async getDocumentData(getIdentity) {
+          this.isLoading = true;
+          let payloadApproveIdentity = {
+            partyId: getIdentity.partyId,
+            documentInfoId: getIdentity.documentInfoId,
+          };
+          try {
+            let response = await this.getMethod(
+              "getDocumentInfoForAdmin",
+              payloadApproveIdentity
+            );
+            
+            let username = {
+              name: response.name,
+            };
+
+            this.userDocumentInfo = {
+              ...response.documentInfoResult,
+              ...username,
+              ...response.outList[0],
+            };
+            this.viewUserDocumentList = true;
+            this.isLoading = false;
+          } catch (error) {
+            this.isLoading = false;
+            console.log("====error===", error);
+          }
+        },
+        closeUserModal() {
+          this.viewUserDocumentList = false;
+        },
         cancelDialog(){
             this.dialogLiveCall = false;
         }
+        
       },
       async created() {
       },
