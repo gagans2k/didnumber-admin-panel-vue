@@ -125,7 +125,7 @@ export default [{
 },
 {
     path: '/didnumberHistory',
-    name: 'User List',
+    name: 'DID Numbers History',
     component: () =>
         import(
             `@/pages/Dashboard/didnumberHistory.vue`
