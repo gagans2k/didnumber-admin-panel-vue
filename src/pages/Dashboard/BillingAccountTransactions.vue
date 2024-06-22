@@ -485,6 +485,7 @@ export default {
         EXT_PAYPAL: "Paypal",
         CREDIT: "Credit Card",
         EXT_IDEAL: "iDEAL",
+        EXT_STRIPE: "Stripe",
       },
     };
   },
