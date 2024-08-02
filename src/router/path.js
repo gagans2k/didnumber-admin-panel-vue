@@ -542,6 +542,15 @@ export default [{
         ),
     beforeEnter: ifAuthenticated
 },
+{
+    path: '/smsLog',
+    name: 'Inbound SMS Log',
+    component: () =>
+        import (
+            `@/pages/Dashboard/accountDetails/smsLog.vue`
+        ),
+    beforeEnter: ifAuthenticated
+},
     // {
     //     path: '/numberManager',
     //     name: 'Number Manager',

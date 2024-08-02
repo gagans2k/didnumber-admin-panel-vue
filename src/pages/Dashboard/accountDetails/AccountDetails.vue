@@ -95,6 +95,17 @@
           <v-card-subtitle class="white--text">Uplaoded Documents</v-card-subtitle>
         </v-card>
       </v-col>
+       <!-- Inbound SMS Log-->
+      <v-col xs="12" sm="4" md="3">
+        <v-card
+          class="primary"
+          height="100"
+          dark
+          :to="{ name: 'Inbound SMS Log', query: $route.query }"
+        >
+          <v-card-subtitle class="white--text">Inbound SMS Log</v-card-subtitle>
+        </v-card>
+      </v-col>
     </v-row>
     <v-row>
       <loading :active="isLoading" :loader="loader" />
