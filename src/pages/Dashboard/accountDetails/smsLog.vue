@@ -55,8 +55,6 @@ export default {
       search: "",
       isLoading: false,
       loader: "bars",
-      isLoading: false,
-      loader: "bars",
       options: {
         page: 1,
         itemsPerPage: 10
