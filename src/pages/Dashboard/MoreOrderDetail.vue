@@ -44,6 +44,14 @@
                   append-icon="dialer_sip"
                 ></v-text-field>
               </v-col>
+              <v-col cols="12" md="12">
+              <v-select
+                :items="['Y', 'N']"
+                v-model="user.hasSMS"
+                label="Has SMS"
+                append-icon="format_list_numbered"
+              ></v-select>
+            </v-col>
             </v-container>
           </v-card-text>
           <v-card-actions>
@@ -423,6 +431,7 @@ export default {
             orderId: this.$route.query.orderId,
             orderItemSeqId: this.$route.query.orderItemSeqId,
             supplierId: this.user.supplierNameList,
+            hasSMS: this.user.hasSMS,
           };
           let response = await productStore.assignDidToOrder(orderDatajson);
           if (response.responseMessage == "success") {
