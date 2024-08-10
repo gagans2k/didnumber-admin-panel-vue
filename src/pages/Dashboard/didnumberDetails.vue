@@ -194,6 +194,43 @@
         </v-form>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="hasSmsDialog" max-width="500px">
+      <v-card>
+        <v-form ref="form" lazy-validation>
+          <v-card-title>
+            <span class="headline">Has SMS</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-select
+                :items="['Y', 'N']"
+                v-model="$route.query.item.hasSms"
+                label="Has SMS"
+                append-icon="format_list_numbered"
+                required
+                outlined
+                dense
+                :value="defaultHasSMSValue"
+              ></v-select>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="cancelHasSms()">
+              Cancel
+            </v-btn>
+            <v-btn
+              color="blue darken-1"
+              text
+              @click="updateHasSMS($route.query.item)"
+            >
+              Update
+            </v-btn>
+          </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-dialog>
     <!--------------------------------------------------------------------------------------->
     <v-card>
       <v-container fluid>
@@ -325,6 +362,39 @@
                   dense
                   color="indigo"
                   @click="oepnPerMinute('perMinCharge')"
+                >
+                  Edit
+                </v-btn>
+              </v-col>
+            </v-row>
+            <v-divider></v-divider>
+
+            <v-row>
+              <v-col cols="2">
+                <span class="subtitle-1 font-weight-bold">Has SMS:</span></v-col
+              >
+
+              <v-col cols="1">
+                <span
+                  class="subtitle-1 font-weight-regular"
+                  v-if="$route.query.item.hasSms == null"
+                >
+                  ----
+                </span>
+                <span
+                  class="subtitle-1 font-weight-regular"
+                  v-if="$route.query.item.hasSms != null"
+                >
+                  {{ $route.query.item.hasSms }}
+                </span>
+              </v-col>
+              <v-col cols="2">
+                <v-btn
+                  class="ma-2"
+                  outlined
+                  dense
+                  color="indigo"
+                  @click="openHasSms('hasSms')"
                 >
                   Edit
                 </v-btn>
@@ -632,7 +702,7 @@
                   class="subtitle-1 font-weight-bold"
                   v-if="
                     $route.query.item.statusId == 'INV_AVAILABLE' ||
-                    $route.query.item.statusId == 'INV_TERMINATED'
+                      $route.query.item.statusId == 'INV_TERMINATED'
                   "
                 >
                   <v-btn
@@ -711,6 +781,7 @@ export default {
       updateNewNumber: "",
       item: {},
       validDiDNumber: true,
+      hasSmsDialog: false,
       validPerMin: true,
       validSp: true,
       oldNumber: "",
@@ -766,6 +837,12 @@ export default {
         //this.getAccountListData();
       },
       deep: true,
+    },
+  },
+
+  computed: {
+    defaulthasSMSValue() {
+      return this.$route.query.item.hasSms || "Y";
     },
   },
 
@@ -878,6 +955,37 @@ export default {
         //   text: error.responseMessage.errorMessage,
         //   color: "error",
         // });
+      }
+    },
+
+    //open sms dialoag
+    openHasSms() {
+      this.hasSmsDialog = true;
+    },
+
+    cancelHasSms() {
+      this.hasSmsDialog = false;
+    },
+
+    async updateHasSMS(hasSmsDetail) {
+      try {
+        let response = await this.postMethod("editHasSMS", {
+          inventoryItemId: hasSmsDetail.inventoryItemId,
+          hasSms: hasSmsDetail.hasSms,
+        });
+        if (response.responseMessage == "success") {
+          this.hasSmsDialog = false;
+          this.$root.$emit("SHOW_SNACKBAR", {
+            text: "Data Updated Successfully",
+            color: "success",
+          });
+        }
+      } catch (error) {
+        // if(error.config.errorHandle === false ) {
+        //     return Promise.reject(error);
+        // }
+        // if (error.response) {
+        // }
       }
     },
 
