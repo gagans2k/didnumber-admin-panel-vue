@@ -79,6 +79,18 @@
           </v-tooltip>
         </v-card>
       </v-col>
+       <v-col xs="12" sm="4" md="3">
+        <v-card
+          color="#6495ed"
+          height="100"
+          dark
+          :to="{ name: 'Customer Verify Documentations' }">
+          <v-card-subtitle>Customer Verify Documentation's</v-card-subtitle>
+          <v-card-text>
+            <span class="font-weight-medium text-h6">{{customerVerifyDocumentations}}</span>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -94,6 +106,7 @@ export default {
       getDetails:"",
       paypalTransactions: "",
       customerTransactions: "",
+      customerVerifyDocumentations: "",
     };
   },
 

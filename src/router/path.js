@@ -551,6 +551,14 @@ export default [{
         ),
     beforeEnter: ifAuthenticated
 },
+{
+    path: '/customerVerifyDocumentations',
+    name: 'Customer Verify Documentations',
+    component: () =>
+        import(
+            `@/pages/Dashboard/customerVerifyDocumentations.vue`
+        ),
+},
     // {
     //     path: '/numberManager',
     //     name: 'Number Manager',

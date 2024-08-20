@@ -133,7 +133,7 @@
                 <v-text-field v-model="profileData.noOfChannels" label="Channel Number" :rules="channelNumberRule" append-icon="dialer_sip" outlined dense required></v-text-field>
             </v-col>
             <v-col cols="12" md="4">
-                <v-text-field v-model="profileData.didNumber" label="Did Number" :rules="didNumberRule" append-icon="dialer_sip" outlined dense required></v-text-field>
+                <v-text-field v-model="profileData.didNumber" label="Did Number" placeholder="Enter DID number" :rules="didNumberRule" append-icon="dialer_sip" outlined dense required></v-text-field>
             </v-col>
             <v-col cols="12" md="4">
                 <v-select :items="supplierList" item-text="supplierName" item-value="supplierId" v-model="profileData.supplierList" label="Supplier List" append-icon="format_list_numbered" outlined dense></v-select>
@@ -155,6 +155,16 @@
             </v-col>
             <v-col cols="12" md="4">
                 <v-text-field v-model="profileData.QuantityAccepted" label="Quantity Accepted" placeholder="Enter quantity of number" :rules="quantityRules" outlined dense required></v-text-field>
+            </v-col>
+            <v-col cols="12" md="4">
+                <v-select
+                    v-model="profileData.hasSms"
+                    :items="['Y', 'N']"
+                    label="Has SMS"
+                    outlined
+                    dense
+                    required
+                ></v-select>
             </v-col>
         </v-row>
         <!-- form button -->
@@ -274,6 +284,7 @@ export default {
     mounted() {
         this.userDetail = JSON.parse(localStorage.getItem("userDetail"));
         this.profileData.supplierList = "DIDNPBX";
+        this.profileData.hasSms = "Y";
         this.getCountryList();
         this.supplyApi();
     },
@@ -563,6 +574,7 @@ export default {
                     stateGeoId: this.profileData.cityDataList,
                     supplierId: 'DIDNPBX',
                     unitCost: this.profileData.UnitCost,
+                    hasSms: this.profileData.hasSms,
                 });
                 if (response.responseMessage = "success") {
                     this.seeSnackbar("SIP successfully created", "success")
