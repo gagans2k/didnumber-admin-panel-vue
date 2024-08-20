@@ -25,6 +25,10 @@
               :items="smsHttpTrunks"
               :server-items-length="totalSmsHttpTrunks"
               :options.sync="options"
+               :footer-props="{
+                'items-per-page-options': [10, 20, 30],
+              }"
+              :items-per-page="10"
             >
               <template v-slot:[`item.indexNo`]="{ item }">
                 {{
@@ -55,10 +59,7 @@ export default {
       search: "",
       isLoading: false,
       loader: "bars",
-      options: {
-        page: 1,
-        itemsPerPage: 10
-      },
+      rowsPerPageItems: [10, 20, 30],
       totalSmsHttpTrunks: 0,
       headers: [
         { text: "#", value: "indexNo", width: "5%" },
@@ -68,7 +69,8 @@ export default {
         { text: "SMS Text", value: "smsText", align: "center", sortable: true }
       ],
       smsHttpTrunks: [],
-      userDetail: {}
+      userDetail: {},
+      options: {},
     };
   },
   watch: {
