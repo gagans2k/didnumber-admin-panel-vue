@@ -17,8 +17,8 @@
     <!-- SEARCH -->
     <v-card elevation="0">
       <v-container fluid>
-        <v-row>
-          <v-col lg="3" md="3" sm="12" class="pb-1">
+        <!-- <v-row> -->
+          <!-- <v-col lg="3" md="3" sm="12" class="pb-1">
             <v-text-field
               v-model="search"
               append-icon="search"
@@ -29,54 +29,9 @@
               dense
             >
             </v-text-field>
-          </v-col>
-        </v-row>
+          </v-col> -->
+        <!-- </v-row> -->
         <!-- DATA TABLE-->
-        <v-dialog v-model="dialogEdit" max-width="500px">
-          <v-card>
-            <v-form ref="form" lazy-validation>
-              <v-card-title>
-                <span class="headline">Action</span>
-              </v-card-title>
-              <v-card-text>
-                <v-container>
-                  <v-radio-group
-                    v-model="column"
-                    v-on:change="changeRoute($event)"
-                    column
-                  >
-                    <v-radio label="Approved" value="DOC_APPROVED"></v-radio>
-                    <v-radio
-                      label="Dispproved"
-                      value="DOC_DISAPPROVED"
-                    ></v-radio>
-                  </v-radio-group>
-                  <v-col cols="12" sm="6" class="d-flex" v-if="showField">
-                    <v-select
-                      :items="items"
-                      menu-props="auto"
-                      label="Number List"
-                      append-icon="format_list_numbered"
-                    ></v-select>
-                  </v-col>
-                </v-container>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeEdit()">
-                  Cancel
-                </v-btn>
-                <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="updateEditData(column)"
-                >
-                  Update
-                </v-btn>
-              </v-card-actions>
-            </v-form>
-          </v-card>
-        </v-dialog>
         <v-row>
           <v-col>
             <v-data-table
@@ -141,33 +96,36 @@
                   :color="getStatusColor(item.isIdentityVerified)"
                   dark
                   class="mr-2"
-                  @click="openStatusDialog(item)"
+                  @click="['Y', 'A', 'R'].includes(item.isIdentityVerified) ? null : openStatusDialog(item)"
                 >
                   {{ getStatusText(item.isIdentityVerified) }}
                 </v-btn>
 
                 <!-- Dialog for changing status and adding a message -->
-                <v-dialog v-model="statusDialog" max-width="500px">
+                <v-dialog v-model="statusDialog" max-width="500px" :key="statusDialog">
                   <v-card>
                     <v-card-title>
                       <span class="headline">Change Status</span>
                     </v-card-title>
 
                     <v-card-text>
-                      <v-form ref="statusForm" @submit.prevent="saveStatus(item)">
+                      <v-form ref="statusForm" lazy-validation>
                         <!-- Status Dropdown -->
-                        <v-select
-                          v-model="selectedStatus"
-                          :items="statusOptions"
-                          label="Change Status"
-                          dense
-                          required
-                          @change="updateMessageValidation"
-                        ></v-select>
+                      <v-select
+                        v-model="selectedStatus"
+                        :items="[
+                          { value: 'Y', text: 'Approved' },
+                          { value: 'R', text: 'Rejected' }
+                        ]"
+                        label="Change Status"
+                        dense
+                        required
+                        @change="updateMessageValidation"
+                      />
 
                         <!-- Message Textbox (required if status is 'Rejected') -->
                         <v-textarea
-                          v-model="statusMessage"
+                          v-model="smsText"
                           label="Message"
                           rows="3"
                           outlined
@@ -179,22 +137,18 @@
 
                     <v-card-actions>
                       <v-spacer></v-spacer>
-                      <v-btn color="green darken-1" text @click="$refs.statusForm.submit()">Save</v-btn>
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        @click="saveStatus(selectedItem)"
+                        :disabled="!selectedStatus">
+                        Update
+                      </v-btn>                      
                       <v-btn color="red darken-1" text @click="closeStatusDialog">Cancel</v-btn>
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
               </template>
-              <!-- <template v-slot:[`item.isIdentityVerified`]="{ item }">
-                <v-select
-                  v-model="item.isIdentityVerified"
-                  :items="statusOptions"
-                  label="Status"
-                  dense
-                  class="mr-1"
-                  @change="approveIdentity(item)"
-                ></v-select>
-             </template> -->
 
             </v-data-table>
           </v-col>
@@ -237,43 +191,27 @@ export default {
       rowsPerPageItems: [10, 20, 30],
       itemsReqestArray: [],
       search: "",
+      isIdentityVerified:"",
+      smsText:"",
+      selectedItem: null, // This should be defined here
       headers: [
-        {
-          text: "S.No",
-          align: "start",
-          value: "indexNo",
-          sortable: false,
-        },
+        { text: "S.No", align: "start", value: "indexNo", sortable: false },
         { text: "Party ID", value: "partyId", sortable: false },
         { text: "Created Date", value: "createdStamp", sortable: false },
         { text: "Identity", value: "documentInfoId", sortable: false },
         { text: "User Login", value: "emailAddress", sortable: false },
         { text: "Action", value: "isIdentityVerified", sortable: false },
-        // {
-        //   text: "Actions",
-        //   value: "viewAction",
-        //   sortable: false,
-        // },
         { text: "Account Detail's", value: "accountDetails", sortable: false },
       ],
       totalItems: 0,
       options: {},
-      // didStatus: "",
-      didStatusList: [
-        { key: "ACTIVATED", value: "DID_ACTIVATED" },
-        { key: "INACTIVE", value: "DID_INACTIVE" },
-        { key: "PENDING", value: "DID_PENDING" },
-        { key: "SUSPENDED", value: "DID_SUSPENDED" },
-        { key: "TERMINATED", value: "DID_TERMINATED" },
-        { key: "ALL", value: "DID_ALL" },
-      ],
-            statusDialog: false,
+     
+      statusDialog: false,
       selectedStatus: '',
       statusMessage: '',
       statusOptions: [
-        { value: 'R', text: 'Rejected' },
-        { value: 'S', text: 'Submitted' },
-        { value: 'Y', text: 'Approved' }
+        { value: 'Y', text: 'Approved' },
+        { value: 'R', text: 'Rejected' }
       ],
       messageRules: [
         v => !!v || 'Message is required for Rejected status'
@@ -289,6 +227,7 @@ export default {
     },
     options: {
       async handler() {
+        console.log("Options changed:", this.options);
         this.isLoading = true;
         const { sortBy, sortDesc, page, itemsPerPage } = this.options;
         let response = await this.getMethod("getVerifyDocs", {
@@ -307,7 +246,7 @@ export default {
     async searchOnServer(searchCode) {
       this.isLoading = true;
       const { sortBy, sortDesc, page, itemsPerPage } = this.options;
-      let response = await this.getMethod("verifyDocs", {
+      let response = await this.getMethod("getVerifyDocs", {
         partyId: searchCode,
       });
       this.itemsReqestArray = response.verifyDocs;
@@ -320,22 +259,32 @@ export default {
       this.column = {};
     },
     //  approve identity
-    async approveIdentity(aproveIndentity) {
-      this.isLoading = true;
-      let payloadApproveIdentity = {
-        partyId: aproveIndentity.partyId,
-        documentInfoId: aproveIndentity.documentInfoId,
-        statusId: aproveIndentity.statusId == "DOC_APPROVED" ? true : false,
+    async saveStatus(selectedItem) {
+      console.log("item: ",selectedItem);
+      if (this.selectedStatus === "R" && !this.smsText) {
+        this.$refs.statusForm.validate(); // Trigger validation if status is Rejected
+        return;
+      }
+
+      // Prepare payload and call API
+      const payloadApproveIdentity = {
+        partyId: this.selectedItem.partyId,
+        documentInfoId: selectedItem.documentInfoId,
+        isIdentityVerified: this.selectedStatus,
+        smsText: this.smsText,
       };
+
       try {
-        let response = await this.postMethod(
-          "approveIdentity",
-          payloadApproveIdentity
-        );
+        this.isLoading = true;
+        await this.postMethod("updateVerifyIdentity", payloadApproveIdentity);
+        this.seeSnackbar("Status Updated Successfully", "success");
+        this.statusDialog = false;
         this.isLoading = false;
+        this.searchOnServer(this.search); // Refresh the table data
       } catch (error) {
+        this.seeSnackbar("Server Error", "error");
         this.isLoading = false;
-        console.log("====error===", error);
+        console.error("Error updating status:", error);
       }
     },
 
@@ -367,7 +316,6 @@ export default {
         this.isLoading = false;
       } catch (error) {
         this.isLoading = false;
-        console.log("====error===", error);
       }
     },
     closeUserModal() {
@@ -400,31 +348,31 @@ export default {
       }
     },
     openStatusDialog(item) {
+      console.log('Opening dialog with item:', item);
       this.selectedStatus = item.isIdentityVerified;
-      this.statusMessage = ''; // Reset the message field
+      this.smsText = ''; // Reset the message field
       this.statusDialog = true;
+      this.selectedItem = item; // Bind the item to a local variable
+      this.$nextTick(() => {
+      this.$refs.statusForm.reset(); // Ensure the form is reset
+      });
     },
     closeStatusDialog() {
       this.statusDialog = false;
+      this.$nextTick(() => {
+        if (this.$refs.statusForm) {
+          this.$refs.statusForm.reset(); // Ensure form is reset
+        } else {
+          console.warn("Form reference is not available.");
+        }
+      });
+
     },
      updateMessageValidation() {
       this.messageRules = this.selectedStatus === 'R'
         ? [v => !!v || 'Message is required for Rejected status']
         : [];
     },
-    saveStatus(item) {
-      if (this.selectedStatus === 'R' && !this.statusMessage) {
-        this.$refs.statusForm.validate(); // Trigger validation if the status is Rejected
-        return;
-      }
-
-      // Update the status
-      item.isIdentityVerified = this.selectedStatus;
-
-      // Additional logic for saving the status and message can be added here
-
-      this.closeStatusDialog();
-    }
   }
 };
 </script>
