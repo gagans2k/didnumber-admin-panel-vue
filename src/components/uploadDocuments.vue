@@ -148,6 +148,14 @@
                     "
                     >mdi-eye</v-icon
                   >
+                  <v-icon
+                    color="blue"
+                    class="ml-2"
+                    @click="
+                      downloadFile(document.base64, document.fileName, document.mimeTypeId)
+                    "
+                    >mdi-download</v-icon
+                  >
                 </h4>
                 <div
                   @click="
@@ -241,6 +249,12 @@ export default {
       this.base64 = "data:application/pdf;base64," + base64;
       this.documentMimeTypeId = documentMimeTypeId;
       this.showImageModal = true;
+    },
+    downloadFile(base64, fileName, mimeType) {
+      const link = document.createElement('a');
+      link.href = `data:${mimeType};base64,${base64}`;
+      link.download = fileName;
+      link.click();
     },
   },
 };
