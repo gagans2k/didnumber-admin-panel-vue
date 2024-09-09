@@ -133,6 +133,7 @@ export default {
       headers: [
         { text: "S.No",value: "indexNo",sortable: false},
         { text: "Party ID",value: "partyId",sortable: false},
+        { text: "Identity Verified", value: "isIdentityVerified",width: "5%",sortable: false},
         { text: "Email", value: "emailAddress",sortable: false},
         { text: "Order Type", value: "orderType", width: "8%",sortable: false},
         { text: "Status", value: "statusId",sortable: false},
