@@ -559,6 +559,15 @@ export default [{
             `@/pages/Dashboard/customerVerifyDocumentations.vue`
         ),
 },
+{
+    path: '/didCountry',
+    name: 'DID Countries',
+    component: () =>
+        import(
+            `@/pages/DidCountry/didCountry.vue`
+        ),
+    beforeEnter: ifAuthenticated
+},
     // {
     //     path: '/numberManager',
     //     name: 'Number Manager',

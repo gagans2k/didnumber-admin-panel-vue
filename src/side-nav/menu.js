@@ -76,6 +76,12 @@ const userMenu = [{
         icon: "swap_horiz",
         path: "/livecall"
     },
+    {
+        title: "DID Countries",
+        name: "DID Countries",
+        icon: "card_travel",
+        path: "/didCountry"
+    },
     // {
     // 	title: "callflow",
     // 	name: "callflow",
