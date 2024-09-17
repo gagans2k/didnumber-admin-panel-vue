@@ -22,7 +22,7 @@
         {{ item.geoName }}
       </template>
       <template v-slot:[`item.endUserRegistration`]="{ item }">
-        {{ item.wellKnownText ? "Required" : "Not Required" }}
+        {{ item.wellKnownText ? "R" : "N.R" }}
         <v-tooltip top v-if="item.wellKnownText" max-width="400">
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
@@ -106,9 +106,6 @@
           <span v-else>CNAM OUT not supported</span>
         </v-tooltip>
       </template>                    
-      <template v-slot:[`item.noOfChannels`]="{ item }">
-        {{ item.noOfChannels }}
-      </template>
       <template v-slot:[`item.perMinCharge`]="{ item }">
         ${{ item.perMinCharge }}
       </template>
@@ -131,7 +128,8 @@
           :readonly="false"
         ></v-switch>
       </template>
-      
+      <template v-slot:[`item.createdStamp`]="{ item }"> {{ item.createdStamp }} </template>
+      <template v-slot:[`item.lastUpdatedStamp`]="{ item }"> {{ item.lastUpdatedStamp }} </template>
       <!-- <tbody>
         <tr class="v-data-table__empty-wrapper">
           <td class="" colspan="6">No matching records found</td>

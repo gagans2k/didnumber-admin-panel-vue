@@ -30,10 +30,10 @@
       <template v-slot:[`item.endUserRegistration`]="{ item }">
         {{
           item.requireDocument == "Y"
-            ? "Required"
+            ? "R"
             : item.wellKnownText
-            ? "Required"
-            : "Not Required"
+            ? "R"
+            : "N.R"
         }}
         <v-tooltip top v-if="item.wellKnownText" max-width="400">
           <template v-slot:activator="{ on, attrs }">
@@ -118,9 +118,6 @@
           <span v-else>CNAM OUT not supported</span>
         </v-tooltip>
       </template>                    
-      <template v-slot:[`item.noOfChannels`]="{ item }">
-        {{ item.noOfChannels }}
-      </template>
       <template v-slot:[`item.perMinCharge`]="{ item }">
         ${{ item.perMinChargeFixed }}
         <v-tooltip top class="px-0 mx-0">
@@ -168,6 +165,8 @@
           :readonly="false"
         ></v-switch>
       </template>
+      <template v-slot:[`item.createdStamp`]="{ item }"> {{ item.createdStamp }} </template>
+      <template v-slot:[`item.lastUpdatedStamp`]="{ item }"> {{ item.lastUpdatedStamp }} </template>
     </v-data-table>
   </v-card>
 </template>

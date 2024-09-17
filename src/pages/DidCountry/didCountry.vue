@@ -228,13 +228,7 @@ export default {
           sortable: false,
         },
         {
-          text: "Capacity",
-          value: "noOfChannels",
-          align: "center",
-          sortable: false,
-        },
-        {
-          text: "Rate per minute",
+          text: "Rate Per Minute",
           value: "perMinCharge",
           align: "center",
           sortable: false,
@@ -251,13 +245,23 @@ export default {
           align: "center",
           sortable: false,
         },
-
         {
           text: "Action",
           value: "enable",
           align: "center",
           sortable: false,
-          width: 100,
+        },
+        {
+          text: "Created",
+          value: "createdStamp",
+          align: "center",
+          sortable: false,
+        },
+        {
+          text: "Last Updated",
+          value: "lastUpdatedStamp",
+          align: "center",
+          sortable: false,
         },
       ],
       filterCardLoader: false,
