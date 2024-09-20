@@ -93,19 +93,17 @@
             >
             <v-spacer></v-spacer>
             <div>
-              <download-csv :data="getCsvData" name="country.csv">
-                <v-btn
-                  class="mt-1 myTitle text-capitalize"
-                  color="green"
-                  outlined
-                  dark
-                  @click="checkJsonData()"
-                >
-                  <v-icon light class="mr-2">cloud_download</v-icon>
-                  Download
-                </v-btn>
-              </download-csv>
-            </div> 
+              <v-btn
+                class="mt-1 myTitle text-capitalize"
+                color="green"
+                outlined
+                dark
+                @click="checkJsonData"
+              >
+                <v-icon light class="mr-2">cloud_download</v-icon>
+                Download
+              </v-btn>
+            </div>
           </v-row>
         </v-col>
       </v-container>
@@ -172,7 +170,7 @@ export default {
       loader: "bars",
       // loading: false,
       selectedType: [],
-      isAdminUser:"",
+      isAdminUser: "",
       getCsvData: [],
       headers: [
         {
@@ -365,7 +363,7 @@ export default {
           didType: type,
           searchText: this.searchText,
           searchType: this.searchType,
-          isAdminUser: "true"
+          isAdminUser: "true",
         };
         let response = {};
         response = await purchasedidAPI.getCountryCityListAPi(data, page, size);
@@ -397,7 +395,7 @@ export default {
           facilityGeoId: this.purchaseDidData.facility.facilityGeoId,
           searchText: this.searchText,
           searchType: this.searchType,
-          isAdminUser: "true"
+          isAdminUser: "true",
         };
         let response = {};
         response = await purchasedidAPI.getCountryTollfreeListApi(
@@ -508,45 +506,66 @@ export default {
     async enableDisableStatus(message, item) {
       this.isLoading = true; // Start loading indicator
       let response;
-      console.log("message: "+message);
-
+      console.log("message: " + message);
 
       if (message === "disabled") {
         response = await this.postMethod("disableStatus", {
-          enable: 'N',
+          enable: "N",
           geoId: item.geoId,
           geoCode: item.prefix,
           didType: item.didType,
         });
       } else if (message === "enabled") {
         response = await this.postMethod("disableStatus", {
-          enable: 'Y',
+          enable: "Y",
           geoId: item.geoId,
           geoCode: item.prefix,
           didType: item.didType,
-        });       
+        });
       }
       // Handle API response and stop loading indicator
       if (response && response.responseMessage === "success") {
-          await this.getDidTypeCount(true);
+        await this.getDidTypeCount(true);
       }
       this.isLoading = false;
     },
 
-   checkJsonData() {
-      this.exportLog();
+    async checkJsonData() {
+      // Await the exportLog to ensure the data is fetched before proceeding
+      await this.exportLog();
+
       console.log("this.getCsvData", this.getCsvData.length);
-      // if (!Array.isArray(this.getCsvData) || this.getCsvData.length === 0) {
-      //   this.$root.$emit("SHOW_SNACKBAR", {
-      //     text: "No Data Available!",
-      //     color: "warning",
-      //   });
-      // } else {
-      //   this.$root.$emit("SHOW_SNACKBAR", {
-      //     text: "Data Available. Preparing download...",
-      //     color: "success",
-      //   });
-      // }
+
+      if (this.getCsvData.length === 0) {
+        this.$root.$emit("SHOW_SNACKBAR", {
+          text: "No Data Available!",
+          color: "warning",
+        });
+      } else {
+        this.$root.$emit("SHOW_SNACKBAR", {
+          text: "Data Available. Preparing download...",
+          color: "success",
+        });
+        this.downloadCSV();
+      }
+    },
+
+    downloadCSV() {
+      const csvData = this.getCsvData;
+      const csvContent = [
+        Object.keys(csvData[0]).join(","), // headers
+        ...csvData.map((row) => Object.values(row).join(",")), // rows
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", "country.csv");
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     },
 
     async exportLog() {
@@ -576,11 +595,13 @@ export default {
             // Only push valid entries into getCsvData
             if (obj.countryGeoId) {
               this.getCsvData.push(obj);
+              this.getCsvData = [...this.getCsvData]; // Force Vue.js to rebind
             }
           }
 
+          console.log("this.getCsvData", this.getCsvData);
           console.log("CSV Data length:", this.getCsvData.length);
-          
+
           if (!this.getCsvData.length) {
             this.$root.$emit("SHOW_SNACKBAR", {
               text: "No valid data available for download.",
@@ -639,5 +660,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
