@@ -92,8 +92,8 @@
               >Filter</v-btn
             >
             <v-spacer></v-spacer>
-            <!-- <div>
-              <download-csv :data="getCsvData" name="callLogs.csv">
+            <div>
+              <download-csv :data="getCsvData" name="country.csv">
                 <v-btn
                   class="mt-1 myTitle text-capitalize"
                   color="green"
@@ -105,7 +105,7 @@
                   Download
                 </v-btn>
               </download-csv>
-            </div>     -->
+            </div> 
           </v-row>
         </v-col>
       </v-container>
@@ -173,6 +173,7 @@ export default {
       // loading: false,
       selectedType: [],
       isAdminUser:"",
+      getCsvData: [],
       headers: [
         {
           text: "Prefix",
@@ -530,6 +531,72 @@ export default {
           await this.getDidTypeCount(true);
       }
       this.isLoading = false;
+    },
+
+   checkJsonData() {
+      this.exportLog();
+      console.log("this.getCsvData", this.getCsvData.length);
+      // if (!Array.isArray(this.getCsvData) || this.getCsvData.length === 0) {
+      //   this.$root.$emit("SHOW_SNACKBAR", {
+      //     text: "No Data Available!",
+      //     color: "warning",
+      //   });
+      // } else {
+      //   this.$root.$emit("SHOW_SNACKBAR", {
+      //     text: "Data Available. Preparing download...",
+      //     color: "success",
+      //   });
+      // }
+    },
+
+    async exportLog() {
+      try {
+        this.isLoading = true;
+        this.getCsvData = []; // Clear previous data
+        const data = {
+          countryGeoId: this.purchaseDidData.facility.facilityGeoId,
+          stateGeoId: this.purchaseDidData.state,
+          requireState: this.purchaseDidData.facility.requireState,
+        };
+
+        const response = await purchasedidAPI.getCountryExportLogData(data);
+
+        if (response) {
+          const lines = response.split("\n");
+          const headers = lines[0].split(",");
+
+          // Iterate over the lines and construct the CSV data
+          for (let i = 1; i < lines.length; i++) {
+            const obj = {};
+            const currentline = lines[i].split(",");
+            for (let j = 0; j < headers.length; j++) {
+              obj[headers[j]] = currentline[j];
+            }
+
+            // Only push valid entries into getCsvData
+            if (obj.countryGeoId) {
+              this.getCsvData.push(obj);
+            }
+          }
+
+          console.log("CSV Data length:", this.getCsvData.length);
+          
+          if (!this.getCsvData.length) {
+            this.$root.$emit("SHOW_SNACKBAR", {
+              text: "No valid data available for download.",
+              color: "warning",
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching CSV data:", error);
+        this.$root.$emit("SHOW_SNACKBAR", {
+          text: "Failed to download data!",
+          color: "error",
+        });
+      } finally {
+        this.isLoading = false;
+      }
     },
 
     getModifyDIDType(didType) {

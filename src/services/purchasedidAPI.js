@@ -74,6 +74,18 @@ const addToCart = (payload, data) => {
     });
 };
 
+const getCountryExportLogData = (payload) => {
+    console.log("payload", payload)
+    return new Promise((resolve, reject) => {
+        http.get(`/exportCountry?countryGeoId=${payload.countryGeoId}&requireState=${payload.requireState}`).then((data) => {
+            resolve(data);
+        }).catch((error) => {
+            reject(error);
+        });
+    });
+};
+
+
 module.exports = {
     getFacilityGeoList,
     getStateList,
@@ -81,4 +93,5 @@ module.exports = {
     getCountryCityListAPi,
     getCountryTollfreeListApi,
     addToCart,
+    getCountryExportLogData
 };
