@@ -719,7 +719,7 @@ export default {
           cityInstructions: "",
           cityNoOfChannels: "30",
           cityPerMinCharge: "",
-          didType: "VIRTUAL_PRI",
+          didType: "VIRTUAL_PRI_DID",
           SMSIN: "Y",
           SMSoutA2P: "Y",
           SMSoutP2P: "Y",
