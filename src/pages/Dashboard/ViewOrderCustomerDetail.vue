@@ -638,6 +638,7 @@
                   <th v-if="orderDetails.identityStatusId == 'DOC_APPROVED'">
                     Activate
                   </th>
+                  <th>Has SMS/SMS IN</th>
                 </tr>
                 <tr
                   v-for="statusData in orderDetails.orderItemList"
@@ -727,6 +728,7 @@
                       <v-icon color="green"> phone</v-icon></v-btn
                     >
                   </td>
+                  <td>{{ statusData.hasSms }}</td>
                 </tr>
               </table>
             </span>
