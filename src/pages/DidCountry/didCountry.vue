@@ -73,13 +73,13 @@
             ></v-checkbox>
             <v-checkbox
               v-model="selectedType"
-              label="Mobile Did"
+              label="Mobile DID"
               value="MOBILE_DID"
               class="pl-3 pt-2 mt-0"
             ></v-checkbox>
             <v-checkbox
               v-model="selectedType"
-              label="Virtual Pri"
+              label="Virtual PRI"
               value="VIRTUAL_PRI"
               class="pl-3 pt-2 mt-0"
             ></v-checkbox>

@@ -683,7 +683,7 @@ export default {
           cityInstructions: "",
           cityNoOfChannels: "2",
           cityPerMinCharge: "",
-          didType: "LOCAL",
+          didType: "LOCAL_DID",
           SMSIN: "Y",
           SMSoutA2P: "Y",
           SMSoutP2P: "Y",
