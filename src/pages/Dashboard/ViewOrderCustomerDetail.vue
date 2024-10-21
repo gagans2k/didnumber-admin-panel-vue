@@ -673,7 +673,7 @@
                     >Expired
                   </td>
                   <!-- New condition for empty or undefined statusData -->
-                  <td v-if="!statusData.didStatus">
+                  <td v-if="statusData.didStatus == 'Cancelled'">
                     <v-icon left style="color: red">highlight_off</v-icon>
                     Cancelled
                   </td>

@@ -183,6 +183,11 @@
               v-if="itemDetails.didStatus == 'DID_TERMINATED'"
               >TERMINATED</span
             >
+            <span
+              class="subtitle-1 font-weight-regular"
+              v-if="itemDetails.didStatus == 'Cancelled'"
+              >Cancelled</span
+            >
           </v-col>
         </v-row>
         <v-divider></v-divider>
