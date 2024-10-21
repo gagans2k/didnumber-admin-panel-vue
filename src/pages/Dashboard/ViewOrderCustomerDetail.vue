@@ -672,7 +672,12 @@
                     <v-icon left style="color: red">highlight_off</v-icon
                     >Expired
                   </td>
-                  <td v-if="statusData.didStatus == null">---</td>
+                  <!-- New condition for empty or undefined statusData -->
+                  <td v-if="!statusData.didStatus">
+                    <v-icon left style="color: red">highlight_off</v-icon>
+                    Cancelled
+                  </td>
+                  <!-- <td v-if="statusData.didStatus == null">---</td> -->
                   <td v-if="statusData.didStatus !== 'DID_PENDING_ALLOCA'">
                     {{ statusData.number }}
                   </td>
