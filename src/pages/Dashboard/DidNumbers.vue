@@ -136,7 +136,7 @@
         <v-card>
           <v-form ref="form" lazy-validation>
             <v-card-title>
-              <span class="headline">Number status</span>
+              <span class="headline">Number Status</span>
               <!-- <v-spacer></v-spacer> -->
 
               <!-- button -->
@@ -243,7 +243,7 @@
         <v-card>
           <v-form ref="form" lazy-validation>
             <v-card-title>
-              <span class="headline">Number status</span>
+              <span class="headline">Number Status</span>
               <!-- button -->
               <v-spacer></v-spacer>
               <v-btn text @click="cancelEdit()" icon>
@@ -631,6 +631,12 @@ export default {
           value: "ViewDetail",
         },
         {
+          text: "Disable Date",
+          align: "start",
+          sortable: false,
+          value: "disableTime",
+        },
+        {
           text: "History",
           value: "viewAction",
           sortable: false,
@@ -871,11 +877,11 @@ export default {
         this.showDeactivate = true;
         this.showDidNumberMessage = false;
       } else if (data.statusId == "INV_EXPIRED") {
-        this.dialogApproveNumber = true;
+        this.dialogApproveNumber = false;
         this.dialogPencil = false;
         this.showDidNumberMessage = false;
-        this.showSuspendedTerminate = true;
-        this.buttonUpdateshow = true;
+        this.showSuspendedTerminate = false;
+        this.buttonUpdateshow = false;
         this.showINV_TERMINATED = false;
         this.showINV_SUSPENDED = false;
       } else if (data.statusId == "INV_DEACTIVATED") {
@@ -886,8 +892,14 @@ export default {
         this.showDeactivateActivateBoth = false;
       } else if (data.statusId == "INV_PROMISED") {
         if (data.didNumber == null) {
-          this.showDidNumberMessage = true;
           this.dialogApproveNumber = true;
+          this.dialogPencil = false;
+          this.showDidNumberMessage = false;
+          this.showSuspendedTerminate = false;
+          this.buttonUpdateshow = false;
+          this.showINV_TERMINATED = false;
+          this.showINV_SUSPENDED = false;
+          this.showDidNumberMessage = true;
         } else {
           this.showINV_TERMINATED = false;
           this.showINV_SUSPENDED = false;
@@ -901,17 +913,17 @@ export default {
         this.dialogApproveNumber = true;
         this.dialogPencil = false;
         this.showDidNumberMessage = false;
+        this.showSuspendedTerminate = false;
         this.showINV_SUSPENDED = true;
         this.showINV_TERMINATED = false;
         this.buttonUpdateshow = true;
       } else if (data.statusId == "INV_TERMINATED") {
-        this.dialogApproveNumber = true;
+        this.dialogApproveNumber = false;
         this.dialogPencil = false;
-        this.showINV_TERMINATED = true;
-        this.showINV_SUSPENDED = false;
-        this.showDidNumberMessage = false;
         this.showSuspendedTerminate = false;
-        this.buttonUpdateshow = true;
+        this.buttonUpdateshow = false;
+        this.showINV_TERMINATED = false;
+        this.showINV_SUSPENDED = false;
       } else if (data.didNumber == null) {
         this.showDidNumberMessage = true;
         this.showSuspendedTerminate = false;
