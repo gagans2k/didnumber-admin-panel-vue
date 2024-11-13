@@ -728,6 +728,7 @@
                     <v-btn
                       icon
                       v-if="statusData.requireDocument == 'Y'"
+                      :disabled="statusData.didStatus === 'DID_ACTIVATED'"
                       @click="openAptoveDialog(statusData)"
                     >
                       <v-icon color="green"> phone</v-icon></v-btn
