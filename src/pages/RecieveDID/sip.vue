@@ -122,7 +122,7 @@
             </v-col>
 
             <v-col cols="12" md="4" v-if="cityDataList.length != 0">
-                <v-select :items="cityDataList" v-model="profileData.cityDataList" label="City" item-text="geoName" item-value="geoId" append-icon="location_city" :rules="cityRule" placeholder="select city" @change="getProvinceCode(profileData.cityDataList)" outlined dense required></v-select>
+                <v-select :items="cityDataList" v-model="profileData.cityDataList" label="City" item-text="geoName-prefix" item-value="geoId" append-icon="location_city" :rules="cityRule" placeholder="select city" @change="getProvinceCode(profileData.cityDataList)" outlined dense required></v-select>
             </v-col>
 
             <v-col cols="12" md="4">
@@ -279,7 +279,7 @@ export default {
         base64result: "",
         getGeoId: "",
         facilityGetNewId: "",
-        showStateField: Boolean,
+        showStateField: Boolean
     }),
     mounted() {
         this.userDetail = JSON.parse(localStorage.getItem("userDetail"));
@@ -533,8 +533,10 @@ export default {
                 }
             });
             response.cityList.forEach((cityListJson, index, arr) => {
+                cityListJson["geoName-prefix"] = `${cityListJson.geoName} / ${cityListJson.geoId} / ${cityListJson.prefix}`;
                 this.cityDataList.push(cityListJson);
             });
+
             this.isoCityDataList = response.cityList;
         },
 
