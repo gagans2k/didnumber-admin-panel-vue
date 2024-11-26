@@ -607,10 +607,16 @@ export default {
           value: "stateName",
         },
         {
-          text: "City	",
+          text: "City",
           align: "start",
           sortable: false,
           value: "cityName",
+        },
+        {
+          text: "City ID",
+          align: "start",
+          sortable: false,
+          value: "cityGeoId",
         },
         {
           text: "Did Number",
