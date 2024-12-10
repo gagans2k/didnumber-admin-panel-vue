@@ -568,6 +568,16 @@ export default [{
         ),
     beforeEnter: ifAuthenticated
 },
+{
+    path: '/jobSandbox',
+    name: 'Job Sandbox',
+    component: () =>
+        import(
+            `@/pages/JobSandbox/sanboxListDetail.vue`
+        ),
+    beforeEnter: ifAuthenticated
+},
+   
     // {
     //     path: '/numberManager',
     //     name: 'Number Manager',

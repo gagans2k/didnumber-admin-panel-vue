@@ -82,6 +82,12 @@ const userMenu = [{
         icon: "card_travel",
         path: "/didCountry"
     },
+    {
+        title: "Job Sandbox",
+        name: "Job Sandbox",
+        icon: "list",
+        path: "/jobSandbox"
+    },
     // {
     // 	title: "callflow",
     // 	name: "callflow",
