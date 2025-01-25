@@ -577,6 +577,14 @@ export default [{
         ),
     beforeEnter: ifAuthenticated
 },
+{
+    path: '/customerLoginAuthentications',
+    name: 'Customer Login Authentications',
+    component: () =>
+        import(
+            `@/pages/Dashboard/customerLoginAuthentications.vue`
+        ),
+}
    
     // {
     //     path: '/numberManager',

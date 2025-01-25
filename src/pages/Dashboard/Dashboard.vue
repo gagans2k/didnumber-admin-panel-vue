@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <!-- SNACKBAR -->
-    <!-- <v-snackbar
+   <!-- <v-snackbar
       v-model="snackbar"
       :color="snackbarColor"
       :right="x === 'right'"
@@ -9,11 +9,7 @@
       :top="y === 'top'"
       >{{ snackbarMessage }}</v-snackbar
     > -->
-    <!-- LOADER -->
-    <!-- <div class="loader" v-if="showLoader">
-      <v-progress-circular indeterminate color="white"></v-progress-circular>
-    </div> -->
-
+    <loading :active="isLoading" :loader="loader" />
     <v-row>
       <v-col xs="12" sm="4" md="3">
         <!-- ACCOUNT LIST -->
@@ -40,6 +36,9 @@
       <v-col xs="12" sm="4" md="3">
         <v-card color="#6495ed" height="100" dark :to="{ name:'Did Numbers' }" >
           <v-card-subtitle>Did Number's</v-card-subtitle>
+           <v-card-text>
+            <span class="font-weight-medium text-h6">{{numbers}}</span>
+          </v-card-text>
         </v-card>
       </v-col>
       <!-- Customer Order's List -->
@@ -79,13 +78,28 @@
           </v-tooltip>
         </v-card>
       </v-col>
-       <v-col xs="12" sm="4" md="3">
+      <v-col xs="12" sm="4" md="3">
         <v-card
-          color="#6495ed"
+          color="#1E90FF"
           height="100"
           dark
           :to="{ name: 'Customer Verify Documentations' }">
           <v-card-subtitle>Customer Verify Documentation's</v-card-subtitle>
+          <v-card-text>
+            <span class="font-weight-medium text-h6">{{customerVerifyDocumentations}}</span>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col xs="12" sm="4" md="3">
+        <v-card
+          color="#6A5ACD"
+          height="100"
+          dark
+          :to="{ name: 'Customer Login Authentications' }">
+          <v-card-subtitle>Customer Login Authentication's</v-card-subtitle>
+          <v-card-text>
+            <span class="font-weight-medium text-h6">{{partyAuthentications}}</span>
+          </v-card-text>
           <v-card-text>
             <span class="font-weight-medium text-h6">{{customerVerifyDocumentations}}</span>
           </v-card-text>
@@ -97,8 +111,14 @@
 <script>
 //import AllApiCalls from "../../services/AllApiCalls";
 import dashboardCountAllAPI from "@/services/dashboardAPI.js";
+import moment from "moment";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
 export default {
   //mixins: [AllApiCalls],
+   components: {
+    Loading,
+  },
   data() {
     return {
       accountListCount: "",
@@ -107,18 +127,36 @@ export default {
       paypalTransactions: "",
       customerTransactions: "",
       customerVerifyDocumentations: "",
+      numbers: "",
+      isLoading: false,
+      showLoader: false,
+      loader: "bars",
+      customerLoginAuthentication: "",
+      partyAuthentications: ""
     };
   },
 
   methods: {
     async getCountAll() {
+      this.isLoading = true;
       try {
         let response = await dashboardCountAllAPI.getCountAllApi();
-        this.accountListCount = response.allCount.users;
-        this.orders = response.allCount.orders;
-        this.paypalTransactions = response.allCount.paypalTransactions;
-        this.customerTransactions = response.allCount.customerTransactions;
-      } catch (error) {}
+        if (response.responseMessage == "success") {
+          this.accountListCount = response.allCount.users;
+          this.orders = response.allCount.orders;
+          this.paypalTransactions = response.allCount.paypalTransactions;
+          this.customerTransactions = response.allCount.customerTransactions;
+          this.numbers = response.allCount.numbers;
+          this.partyAuthentications = response.allCount.partyAuthentications;
+        }
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+        this.$root.$emit("SHOW_SNACKBAR", {
+          text: "Some internal error has occurred. Please try after sometime.",
+          color: "error",
+        });
+      }
     },
   },
 
