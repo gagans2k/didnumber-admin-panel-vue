@@ -508,6 +508,7 @@ export default {
           EMERGENCY: "Y",
           CNAMOUT: "Y",
           "T.38/FAX": "Y",
+          enable: "Y"
         },
         {
           countryName: "Latvia",
@@ -545,6 +546,7 @@ export default {
           EMERGENCY: "Y",
           CNAMOUT: "Y",
           "T.38/FAX": "Y",
+          enable: "N"
         },
         {
           countryName: "Latvia",
@@ -582,6 +584,7 @@ export default {
           EMERGENCY: "Y",
           CNAMOUT: "Y",
           "T.38/FAX": "Y",
+          enable: "N"
         },
         {
           countryName: "Latvia",
@@ -619,6 +622,7 @@ export default {
           EMERGENCY: "Y",
           CNAMOUT: "Y",
           "T.38/FAX": "Y",
+          enable: "Y"
         },
         {
           countryName: "Latvia",
@@ -656,6 +660,7 @@ export default {
           EMERGENCY: "Y",
           CNAMOUT: "Y",
           "T.38/FAX": "Y",
+          enable: "Y"
         },
         {
           countryName: "United States",
@@ -692,6 +697,7 @@ export default {
           EMERGENCY: "Y",
           CNAMOUT: "Y",
           "T.38/FAX": "Y",
+          enable: "Y"
         },
         {
           countryName: "United States",
@@ -728,6 +734,7 @@ export default {
           EMERGENCY: "Y",
           CNAMOUT: "Y",
           "T.38/FAX": "Y",
+          enable: "Y"
         },
       ];
       //var JSONData = [{"Reference":"1","First_name":"Lauri","Last_name":"Amerman","Dob":"1980","Sex":"F"},{"Reference":"2","First_name":"Rebbecca","Last_name":"Bellon","Dob":"1977","Sex":"F"},{"Reference":"3","First_name":"Stanley","Last_name":"Benton","Dob":"1984","Sex":"M"}]
