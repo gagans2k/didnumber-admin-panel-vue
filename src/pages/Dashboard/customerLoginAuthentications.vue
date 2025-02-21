@@ -19,6 +19,33 @@
     <!-- <v-container fluid> -->
     <!-- SEARCH -->
     <v-row>
+      <!-- Party Id-->
+       <v-col xs="12" sm="5" md="3">
+        <v-text-field
+          v-model="partyId"
+          append-icon="mdi-magnify"
+          label="Search by Party Id"
+          outlined
+          dense
+          hide-details
+          v-on:keyup.enter="getDataFromApi(search)"
+          @click:append="getDataFromApi(search)"
+        ></v-text-field>
+      </v-col>
+      <v-col xs="12" sm="6" md="4">
+        <v-autocomplete 
+          v-model="authenticationTypes"
+          :items="authenticationTypeList"
+          label="Search By Authentication Type"
+          item-text="key"
+          item-value="value"
+          outlined
+          dense
+          @change="searchOnServer(authenticationTypes)"
+        ></v-autocomplete>
+      </v-col>
+       <!-- Buttton -->
+      <v-spacer></v-spacer>
       <v-col xs="12" sm="2" md="1" class="mt-3">
         <v-btn
           dark
@@ -47,7 +74,7 @@
         >
           <!-- INDEX NO -->
           <template v-slot:[`item.indexNo`]="{ item }">
-            <span>{{ (options.page * 10) - (10 - (items.indexOf(item) + 1) ) }}</span>
+            {{ item.indexNo }}
           </template>
 
           <!-- fromDate -->
@@ -77,32 +104,36 @@ export default {
       loader: "bars",
       moment: moment,
       items: [],
+      search: "",
+      copyOfSearch: "",
       headers: [
-        { text: "S.No",value: "indexNo",sortable: false},
+        {text: "S.No", align: "start", value: "indexNo", sortable: false},  
         { text: "Authentication Id",value: "authenticationId",sortable: false},
-        { text: "Login Id", value: "userLoginId",sortable: false},
         { text: "Account Id", value: "partyId",sortable: false},
+        { text: "Login Id", value: "userLoginId",sortable: false},
+        { text: "Two Factor", value: "enabledTwoFactor",sortable: false},
         { text: "Start Date Time", value: "fromDate", sortable: false},
         { text: "Authentication Type", value: "authenticationTypeLabel",sortable: false},
       ],
       totalItems: 0,
       options: {},
-      jobStatus: "",
-      serviceStatusList: [
-        { key: "Failed", value: "SERVICE_FAILED" },
-        { key: "Finished", value: "SERVICE_FINISHED" },
-        { key: "Pending", value: "SERVICE_PENDING" },
-        { key: "Running", value: "SERVICE_RUNNING" },
-        { key: "All", value: "SERVICE_ALL" },
+      authenticationTypes: "",
+      authenticationTypeList: [
+        { key: "Google Authentication", value: "GOOGLE_AUTH" },
+        { key: "Email Authentication", value: "EMAIL_AUTH" },
+        { key: "ALL", value: "AUTH_ALL" },
       ],
       userDocumentInfo: {},
       viewUserDocumentList: false,
+      partyId: "",
+      copyOfPartyId: ""
     };
   },
   computed: {
     transformedItems() {
-      const transformed = this.items.map((item) => ({
+      return this.items.map((item, index) => ({
         ...item,
+        indexNo: index + 1, // Assign index during transformation
         authenticationTypeLabel:
           item.authenticationType === "EMAIL_AUTH"
             ? "Email Authentication"
@@ -110,9 +141,6 @@ export default {
             ? "Google Authentication"
             : "Unknown Authentication",
       }));
-
-      console.log("Transformed Items:", transformed); // Debugging log
-      return transformed;
     },
   },
 
@@ -134,12 +162,85 @@ export default {
       },
       deep: true,
     },
+    async search(val) {
+      if (val.length > 0) {
+        this.copyOfSearch = val;
+      }
+      if (this.search.length == 0) {
+        if (this.copyOfSearch.length > 0) {
+          // const { items, total } = await this.getDataFromApi();
+          // this.items = items;
+          // this.totalItems = total;
+         // this.getDataFromApi();
+          this.copyOfSearch = null;
+        }
+      }
+    },
+
+    async partyId(val) {
+      if (this.partyId.length > 0) {
+        this.copyOfPartyId = this.partyId;
+      }
+      if (this.partyId.length == 0) {
+        if (this.copyOfPartyId.length > 0) {
+          this.copyOfPartyId = null;
+        }
+      }
+    }
   },
 
   methods: {
     closeUserModal() {
       this.viewUserDocumentList = false;
     },
+
+    async searchOnServer(statusidGet) {
+      this.isLoading = true;
+      this.getstatusidbySelect = statusidGet;
+      this.options.page = 1;
+      this.getDataFromApi();
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 500);
+    },
+
+    async getDataFromApi() {
+      return new Promise(async (resolve, reject) => {
+        const { sortBy, sortDesc} = this.options;
+        let response = await this.getMethod("getPartyAuthentications", {
+          partyId: this.partyId,
+          authenticationType: this.getstatusidbySelect
+        });
+        this.items = response.partyAuthentications;
+        this.totalItems = response.listSize;
+        if (sortBy.length === 1 && sortDesc.length === 1) {
+          items = items.sort((a, b) => {
+            const sortA = a[sortBy[0]];
+            const sortB = b[sortBy[0]];
+
+            if (sortDesc[0]) {
+              if (sortA < sortB) return 1;
+              if (sortA > sortB) return -1;
+              return 0;
+            } else {
+              if (sortA < sortB) return -1;
+              if (sortA > sortB) return 1;
+              return 0;
+            }
+          });
+        }
+
+        // if (itemsPerPage > 0) {
+        //   var items = items.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+        // }
+        setTimeout(() => {
+          resolve({
+            // items,
+            //total,
+          });
+        }, 0);
+      });
+    }
 
   },
 };

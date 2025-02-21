@@ -17,7 +17,7 @@
 
      <!-- SEARCH BY NAME AND EMAIL -->
      <v-row>
-      <!-- NAME-->
+      <!-- Party Id-->
        <v-col xs="12" sm="5" md="3">
         <v-text-field
           v-model="partyId"
