@@ -30,7 +30,10 @@
       <v-col xs="12" sm="4" md="3">
         <v-card color="sky green" height="100" dark :to="{ name: 'Dashboard import' }">
           <v-card-subtitle>Import Location Data</v-card-subtitle>
-        </v-card>
+          <v-card-text>
+            <span class="font-weight-medium text-h6">{{countries}}</span>
+          </v-card-text>
+       </v-card>
       </v-col>
       <!-- Did Numbers -->
       <v-col xs="12" sm="4" md="3">
@@ -60,22 +63,9 @@
          color="#ffa500"
           height="100"
           dark
-          :to="{ name: 'Billing Account Transactions' }"
-        >
-          <v-card-subtitle
-            >Billing A/C Transaction's </v-card-subtitle
-          >
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-card-text v-bind="attrs" v-on="on"
-                ><span class="font-weight-medium text-h6"
-                  >{{ paypalTransactions }} - {{ customerTransactions }}</span
-                ></v-card-text
-              >
-            </template>
-            <div>Paypal Transactions - {{ paypalTransactions }}</div>
-            <div>Customer Transactions - {{ customerTransactions }}</div>
-          </v-tooltip>
+          :to="{ name: 'Billing Account Transactions' }">
+          <v-card-subtitle >Billing A/C Transaction's </v-card-subtitle>
+          <v-card-text v-bind="attrs" v-on="on" ><span class="font-weight-medium text-h6">{{ paypalTransactions }} - {{ customerTransactions }}</span></v-card-text>
         </v-card>
       </v-col>
       <v-col xs="12" sm="4" md="3">
@@ -85,8 +75,8 @@
           dark
           :to="{ name: 'Customer Verify Documentations' }">
           <v-card-subtitle>Customer Verify Documentation's</v-card-subtitle>
-          <v-card-text>
-            <span class="font-weight-medium text-h6">{{customerVerifyDocumentations}}</span>
+         <v-card-text>
+            <span class="font-weight-medium text-h6">{{documentInfoCount}}</span>
           </v-card-text>
         </v-card>
       </v-col>
@@ -99,9 +89,6 @@
           <v-card-subtitle>Customer Login Authentication's</v-card-subtitle>
           <v-card-text>
             <span class="font-weight-medium text-h6">{{partyAuthentications}}</span>
-          </v-card-text>
-          <v-card-text>
-            <span class="font-weight-medium text-h6">{{customerVerifyDocumentations}}</span>
           </v-card-text>
         </v-card>
       </v-col>
@@ -126,13 +113,14 @@ export default {
       getDetails:"",
       paypalTransactions: "",
       customerTransactions: "",
-      customerVerifyDocumentations: "",
       numbers: "",
       isLoading: false,
       showLoader: false,
       loader: "bars",
       customerLoginAuthentication: "",
-      partyAuthentications: ""
+      partyAuthentications: "",
+      countries: "",
+      documentInfoCount: ""
     };
   },
 
@@ -148,6 +136,8 @@ export default {
           this.customerTransactions = response.allCount.customerTransactions;
           this.numbers = response.allCount.numbers;
           this.partyAuthentications = response.allCount.partyAuthentications;
+          this.documentInfoCount = response.allCount.documentInfoCount;
+          this.countries = response.allCount.countries;
         }
         this.isLoading = false;
       } catch (error) {
