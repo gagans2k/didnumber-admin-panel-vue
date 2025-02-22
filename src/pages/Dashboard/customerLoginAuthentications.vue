@@ -77,6 +77,17 @@
             {{ item.indexNo }}
           </template>
 
+          <!-- SWITCH enable disable status -->
+          <template v-slot:[`item.enabledTwoFactor`]="{ item }">
+            <v-switch
+              v-if="item.enabledTwoFactor == 'Y'"
+              :input-value="true"
+              color="primary"
+              @click="enableDisable('disabled', item)"
+              :readonly="true"
+            ></v-switch>
+          </template>
+
           <!-- fromDate -->
           <template v-slot:[`item.fromDate`]="{ item }">
             {{ item.fromDate ? moment(item.fromDate).format("MMMM DD, YYYY, HH:mm") : '......................' }}
@@ -111,7 +122,7 @@ export default {
         { text: "Authentication Id",value: "authenticationId",sortable: false},
         { text: "Account Id", value: "partyId",sortable: false},
         { text: "Login Id", value: "userLoginId",sortable: false},
-        { text: "Two Factor", value: "enabledTwoFactor",sortable: false},
+        { text: "Action", value: "enabledTwoFactor", sortable: false  },
         { text: "Start Date Time", value: "fromDate", sortable: false},
         { text: "Authentication Type", value: "authenticationTypeLabel",sortable: false},
       ],
@@ -202,6 +213,32 @@ export default {
       setTimeout(() => {
         this.isLoading = false;
       }, 500);
+    },
+
+    async enableDisable(message, item) {
+      this.isLoading = true;
+      try {
+        let response = await this.postMethod("disabledAuthenticationByAdmin", {
+          username: item.userLoginId,
+          authenticationId: item.authenticationId,
+        });
+        if (response.responseMessage == "success") {
+          this.$root.$emit("SHOW_SNACKBAR", {
+            text: response.messageDetail || "Two Factor Authentication APP Disabled.",
+            color: "success",
+          });
+          await this.getDataFromApi();
+          this.isLoading = false;
+        }
+      } catch (error) {
+        // Safely retrieve the error message from the API response
+        let errorMessage = "You cannot disable this authentication because at least one authentication method is required for security purposes.";
+        this.$root.$emit("SHOW_SNACKBAR", {
+          text: errorMessage,
+          color: "error",
+        });
+        this.isLoading = false;
+      }
     },
 
     async getDataFromApi() {
