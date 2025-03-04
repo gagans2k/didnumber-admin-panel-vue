@@ -60,6 +60,7 @@
             <span v-if="item.didStatus == 'DID_SUSPENDED'">Suspended</span>
             <span v-if="item.didStatus == 'DID_EXPIRED'">Expired</span>
             <span v-if="item.didStatus == 'DID_TERMINATED'">Terminated</span>
+            <span v-if="item.didStatus == 'DID_DISABLED'">Disabled</span>
             <span v-if="item.didStatus == null">-</span>
           </template>
         </v-data-table>

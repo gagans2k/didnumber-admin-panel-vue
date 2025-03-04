@@ -110,7 +110,15 @@ const didNumberHistory = () => {
 	});
 };
 
-
+const terminateDID = (payload) => {
+    return new Promise((resolve, reject) => {
+        http.post('/terminateDID',payload).then((data) => {
+            resolve(data);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+};
 
 module.exports = {
 	getProductStoreDetails,
@@ -123,5 +131,6 @@ module.exports = {
     enableDID,
     deleteDidNumber,
     activateNumber,
-    didNumberHistory
+    didNumberHistory,
+    terminateDID
 };

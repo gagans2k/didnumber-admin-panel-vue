@@ -702,7 +702,8 @@
                   class="subtitle-1 font-weight-bold"
                   v-if="
                     $route.query.item.statusId == 'INV_AVAILABLE' ||
-                      $route.query.item.statusId == 'INV_TERMINATED'
+                      $route.query.item.statusId == 'INV_TERMINATED' ||
+                      $route.query.item.statusId == 'INV_DISABLED'
                   "
                 >
                   <v-btn

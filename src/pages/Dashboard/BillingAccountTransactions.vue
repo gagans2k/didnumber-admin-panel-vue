@@ -486,7 +486,9 @@ export default {
         CREDIT: "Credit Card",
         EXT_IDEAL: "iDEAL",
         EXT_STRIPE: "Stripe",
-        GIFT_CERTIFICATE : "Gift Cerificate"
+        GIFT_CERTIFICATE: "Gift Certificate",
+        EXT_OFFLINE: "Offline Payment",
+        MONEY_ORDER: "Money Order"
       },
     };
   },

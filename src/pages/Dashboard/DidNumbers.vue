@@ -105,6 +105,34 @@
           </v-form>
         </v-card>
       </v-dialog>
+      <v-dialog v-model="terminateDialog" max-width="500px">
+        <v-card>
+          <v-form ref="form" lazy-validation>
+            <v-card-title>
+              <span class="headline">Action : Disabled To Terminate Number</span>
+            </v-card-title>
+             <v-card-text>
+              <v-row>
+                <v-col cols="12" md="10">
+                  Are you sure you want to activate this number? 
+                  <br />
+                  <strong>Note:</strong> A terminated number will automatically become available after 5 days.
+                </v-col>
+              </v-row>
+            </v-card-text>
+            <!-- button -->
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="disableTerminateClose()">
+                Cancel
+              </v-btn>
+              <v-btn color="blue darken-1" text @click="terminateDidNumber()">
+                Terminate
+              </v-btn>
+            </v-card-actions>
+          </v-form>
+        </v-card>
+      </v-dialog>
       <!-- activate number  -->
       <v-dialog v-model="openActivateDialog" max-width="500px">
         <v-card>
@@ -379,6 +407,7 @@
               <span v-if="item.statusId == 'INV_ALLO_CANCELLED'"
                 >Allocation Cancelled</span
               >
+              <span v-if="item.didStatus == 'DID_DISABLED'">Disabled</span>
             </template>
             <template v-slot:[`item.didNumber`]="{ item }">
               <span v-if="item.didNumber == null">XXXXXX</span>
@@ -409,6 +438,18 @@
               </v-btn>
               <v-btn
                 v-if="
+                  item.didStatus == 'DID_DISABLED'"
+                  color="blue"
+                  class="mx-2"
+                  fab
+                  outlined
+                  small
+                  @click="terminateUser(item)"
+                >
+                <v-icon color="green">mdi-phone-incoming</v-icon>
+              </v-btn>
+              <v-btn
+                v-if="
                   item.didStatus == 'DID_SUSPENDED' ||
                   item.didStatus == 'DID_TERMINATED'
                 "
@@ -419,7 +460,7 @@
                 small
                 @click="enableUser(item)"
               >
-                <v-icon color="blue"> settings_phone </v-icon>
+              <v-icon color="blue"> settings_phone </v-icon>
               </v-btn>
               <v-btn
                 v-if="item.didStatus == 'DID_INACTIVE'"
@@ -562,6 +603,11 @@ export default {
           value: "Terminated",
           statusId: "INV_TERMINATED",
         },
+        {
+          key: "disabled",
+          value: "Disabled",
+          statusId: "INV_DISABLED",
+        },
       ],
       INV_DEACTIVATED: "",
       INV_AVAILABLE: "",
@@ -663,6 +709,7 @@ export default {
       buttonUpdateshow: false,
       showINV_SUSPENDED: false,
       showINV_TERMINATED: false,
+      terminateDialog: false
     };
   },
   watch: {
@@ -682,6 +729,9 @@ export default {
       val || this.closeEdit();
     },
     enableDialog(val) {
+      val || this.closefacilityIdCodeEdit();
+    },
+    terminateDialog(val) {
       val || this.closefacilityIdCodeEdit();
     },
     openActivateDialog(val) {
@@ -718,8 +768,7 @@ export default {
     async getFacilityGeoList() {
       this.isLoading = true;
       let response = await this.getMethod("getFacilityGeoList", {
-        accountId: this.$route.query.accountId,
-        authToken: localStorage.getItem("authNew"),
+        accountId: this.$route.query.accountId
       });
       this.isoCountryCode = response.countryList;
       response.countryList.forEach((currentValue, index, arr) => {
@@ -731,8 +780,7 @@ export default {
     async getSearchData() {
       this.isLoading = true;
       let response = await this.getMethod("getFacilityGeoList", {
-        accountId: this.$route.query.accountId,
-        authToken: localStorage.getItem("authNew"),
+        accountId: this.$route.query.accountId
       });
       this.isoCountryCode = response.countryList;
       response.countryList.forEach((currentValue, index, arr) => {
@@ -744,8 +792,7 @@ export default {
     async getCountryCities(cityGeoId) {
       this.isLoading = true;
       let result = await this.getMethod("getFacilityGeoList", {
-        accountId: this.$route.query.accountId,
-        authToken: localStorage.getItem("authNew"),
+        accountId: this.$route.query.accountId
       });
       this.isoCountryCode = result.countryList;
       result.countryList.forEach((currentValue, index, arr) => {
@@ -1045,8 +1092,42 @@ export default {
       }
     },
 
+    async terminateDidNumber() {
+      try {
+        var terminateNumberJson = {
+          inventoryItemId: this.numberdata.inventoryItemId,
+          viaAdmin: true,
+          authToken: localStorage.getItem("authNew"),
+          callflowId: this.numberdata.callflowId
+        };
+        let response = await productStore.terminateDID(terminateNumberJson);
+        if (response.responseMessage == "success") {
+          this.getDataDidNumber();
+          this.terminateDialog = false;
+          // windows.history.go()
+          this.seeSnackbar("Success", "success");
+        } else if (responseMessage == "error") {
+          this.seeSnackbar(response.messageDetail, "error");
+        }
+        this.enableDialog = false;
+      } catch (error) {
+        if (error.data.messageDetail) {
+          this.$root.$emit("SHOW_SNACKBAR", {
+            text: error.data.messageDetail,
+            color: "error",
+          });
+          this.terminateDialog = false;
+        }
+      }
+    },
+
     enableUser(data) {
       this.enableDialog = true;
+      this.numberdata = data;
+    },
+
+    terminateUser(data) {
+      this.terminateDialog = true;
       this.numberdata = data;
     },
 
@@ -1108,6 +1189,10 @@ export default {
 
     disableClose() {
       this.enableDialog = false;
+    },
+
+    disableTerminateClose(){
+      this.terminateDialog = false;
     },
 
     deleteItem(value) {
