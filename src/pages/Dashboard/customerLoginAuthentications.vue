@@ -24,7 +24,7 @@
         <v-text-field
           v-model="partyId"
           append-icon="mdi-magnify"
-          label="Search by Party Id"
+          label="Search by Account Id"
           outlined
           dense
           hide-details
@@ -121,7 +121,7 @@ export default {
         {text: "S.No", align: "start", value: "indexNo", sortable: false},  
         { text: "Authentication Id",value: "authenticationId",sortable: false},
         { text: "Account Id", value: "partyId",sortable: false},
-        { text: "Login Id", value: "userLoginId",sortable: false},
+        { text: "User Login Id", value: "userLoginId",sortable: false},
         { text: "Action", value: "enabledTwoFactor", sortable: false  },
         { text: "Start Date Time", value: "fromDate", sortable: false},
         { text: "Authentication Type", value: "authenticationTypeLabel",sortable: false},
