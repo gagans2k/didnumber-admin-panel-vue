@@ -89,7 +89,10 @@
 
             <v-card-text>
               <v-row>
-                <v-col cols="12" md="6"> Enable Number </v-col>
+                <v-col cols="12" md="10"> Enable Number 
+                 <br />
+                  <strong>Note:</strong> The number will be automatically activated with the renewal charge.
+                </v-col>
               </v-row>
             </v-card-text>
             <!-- button -->
@@ -142,7 +145,7 @@
             </v-card-title>
             <v-card-text>
               <v-row>
-                <v-col cols="12" md="6">
+                <v-col cols="12" md="10">
                   Are you sure you want activate this number ?
                 </v-col>
               </v-row>
@@ -450,9 +453,7 @@
               </v-btn>
               <v-btn
                 v-if="
-                  item.didStatus == 'DID_SUSPENDED' ||
-                  item.didStatus == 'DID_TERMINATED'
-                "
+                  item.didStatus == 'DID_SUSPENDED'"
                 color="blue"
                 class="mx-2"
                 fab
@@ -532,6 +533,8 @@ import AllApiCalls from "@/services/AllApiCalls";
 import productStore from "../../services/productStore";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
+import numberManagerAPI from "@/services/numberManagerAPI.js";
+
 export default {
   mixins: [AllApiCalls],
   components: {
@@ -728,12 +731,12 @@ export default {
     dialogEdit(val) {
       val || this.closeEdit();
     },
-    enableDialog(val) {
-      val || this.closefacilityIdCodeEdit();
-    },
-    terminateDialog(val) {
-      val || this.closefacilityIdCodeEdit();
-    },
+    // enableDialog(val) {
+    //   val || this.closefacilityIdCodeEdit();
+    // },
+    // terminateDialog(val) {
+    //   val || this.closefacilityIdCodeEdit();
+    // },
     openActivateDialog(val) {
       val || this.activateClose();
     },
@@ -1065,18 +1068,15 @@ export default {
 
     async enableDidNumber() {
       try {
-        var enableNumberJson = {
-          inventoryItemId: this.numberdata.inventoryItemId,
-          didNumber: this.numberdata.didNumber,
-          orderId: this.numberdata.orderId,
-          partyId: this.numberdata.partyId,
-        };
-        let response = await productStore.enableDID(enableNumberJson);
+        let response = await numberManagerAPI.runSubscriptionExpired({
+          subscriptionId: this.numberdata.subscriptionId,
+        });
+        console.log(this.numberdata.subscriptionId+"==========responseMessage==========="+response);
         if (response.responseMessage == "success") {
           this.getDataDidNumber();
           this.enableDialog = false;
           // windows.history.go()
-          this.seeSnackbar("Success", "success");
+          this.seeSnackbar(response.successMessage, "success");
         } else if (responseMessage == "error") {
           this.seeSnackbar(response.messageDetail, "error");
         }

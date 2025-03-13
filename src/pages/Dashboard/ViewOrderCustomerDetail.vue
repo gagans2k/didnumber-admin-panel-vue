@@ -638,6 +638,9 @@
                   <th v-if="orderDetails.identityStatusId == 'DOC_APPROVED'">
                     Activate
                   </th>
+                  <th v-if="orderDetails.identityStatusId != 'DOC_APPROVED'">
+                    Activate without Document
+                  </th>
                   <th>Has SMS/SMS IN</th>
                 </tr>
                 <tr
@@ -725,6 +728,16 @@
                     {{ statusData.requireDocument }}
                   </td>
                   <td v-if="orderDetails.identityStatusId == 'DOC_APPROVED'">
+                    <v-btn
+                      icon
+                      v-if="statusData.requireDocument == 'Y'"
+                      :disabled="statusData.didStatus === 'DID_ACTIVATED'"
+                      @click="openAptoveDialog(statusData)"
+                    >
+                      <v-icon color="green"> phone</v-icon></v-btn
+                    >
+                  </td>
+                  <td v-if="orderDetails.identityStatusId != 'DOC_APPROVED'">
                     <v-btn
                       icon
                       v-if="statusData.requireDocument == 'Y'"
@@ -1580,6 +1593,7 @@ export default {
       this.isLoading = true;
       let payloadApproveIdentity = {
         inventoryItemId: this.aporveNumberData.inventoryItemId,
+        viaAdmin: true,
         authToken: localStorage.getItem("authNew"),
       };
       try {
