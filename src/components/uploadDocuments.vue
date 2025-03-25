@@ -232,7 +232,8 @@ export default {
   filters: {
     setDateFormat(dob) {
       if (dob) {
-        const dateString = moment.unix(dob / 1000).format("YYYY-MM-DD");
+        // Convert PostgreSQL timestamp to a valid date string
+        const dateString = moment(dob).format("YYYY-MM-DD");
         return dateString;
       } else {
         return "-";

@@ -1071,7 +1071,6 @@ export default {
         let response = await numberManagerAPI.runSubscriptionExpired({
           subscriptionId: this.numberdata.subscriptionId,
         });
-        console.log(this.numberdata.subscriptionId+"==========responseMessage==========="+response);
         if (response.responseMessage == "success") {
           this.getDataDidNumber();
           this.enableDialog = false;
