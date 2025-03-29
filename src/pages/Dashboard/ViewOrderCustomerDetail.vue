@@ -97,6 +97,7 @@
                     v-model="userDocumentInfo.firstName"
                     color="primary"
                     :rules="firstNameRules"
+                    :counter="maxCharacters"
                     outlined
                     dense
                     :disabled="userDocumentInfo.statusId == 'DOC_APPROVED'"
@@ -106,12 +107,13 @@
                 <v-col cols="12" sm="4" class="py-0">
                   <v-text-field
                     label="Middle name"
+                    :rules="middleNameRules"
                     v-model="userDocumentInfo.middleName"
+                    :counter="maxCharacters"
                     color="primary"
                     outlined
                     dense
                     :disabled="userDocumentInfo.statusId == 'DOC_APPROVED'"
-                    :rules="middleNameRules"
                   >
                   </v-text-field>
                 </v-col>
@@ -119,11 +121,80 @@
                   <v-text-field
                     label="Last name"
                     v-model="userDocumentInfo.lastName"
+                    :counter="maxCharacters"
                     color="primary"
                     :rules="lastNameRules"
                     outlined
                     dense
                     :disabled="userDocumentInfo.statusId == 'DOC_APPROVED'"
+                  >
+                  </v-text-field>
+                </v-col>
+                <!-- <v-col cols="12" sm="4" class="py-0">
+                  <v-select
+                    :items="countryCodeOptions"
+                    label="Country"
+                    v-model="userDocumentInfo.countryCode"
+                    item-text="name"
+                    item-value="code"
+                    outlined
+                    dense
+                  ></v-select>
+                </v-col> -->
+                <v-col cols="12" sm="4" class="py-0">
+                  <v-select
+                    :items="countryCodeOptions"
+                    label="Country Code"
+                    v-model="userDocumentInfo.countryCode"
+                    item-text="name"
+                    item-value="code"
+                    outlined
+                    dense
+                    :rules="countryCodeRules"
+                    :disabled="
+                      userDocumentInfo.statusId == 'DOC_APPROVED' &&
+                      !showCountryCode
+                    "
+                  >
+                    <template v-slot:item="data">
+                      <div class="d-flex align-center">
+                        <img
+                          :src="getFlagURL(data.item.iso2)"
+                          class="mr-2"
+                          alt="flag"
+                        />
+                        <span>{{ data.item.name }}</span>
+                        <span class="ml-auto">{{ data.item.code }}</span>
+                      </div>
+                    </template>
+                    <template v-slot:selection="data">
+                      <div class="d-flex align-center">
+                        <img
+                          :src="getFlagURL(data.item.iso2)"
+                          class="mr-2"
+                          alt="flag"
+                        />
+                        <span>{{ data.item.name }}</span>
+                        <span class="ml-auto">{{ data.item.code }}</span>
+                      </div>
+                    </template>
+                  </v-select>
+                </v-col>
+
+                <v-col cols="12" sm="4" class="py-0">
+                  <v-text-field
+                    type="number"
+                    label="Phone Number"
+                    v-model="userDocumentInfo.contactNumber"
+                    color="primary"
+                    :counter="15"
+                    :rules="mobileNumberRules"
+                    outlined
+                    dense
+                    :disabled="
+                      userDocumentInfo.statusId == 'DOC_APPROVED' &&
+                      !showPhoneNumber
+                    "
                   >
                   </v-text-field>
                 </v-col>
@@ -139,16 +210,16 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
-                        v-model="userDocumentInfo.dateOfBirth"
                         label="Date Of Birth"
                         persistent-hint
-                        append-icon="mdi-calendar"
+                        prepend-icon="mdi-calendar"
                         v-bind="attrs"
                         v-on="on"
                         outlined
-                        dense
                         readonly
+                        dense
                         :disabled="userDocumentInfo.statusId == 'DOC_APPROVED'"
+                        v-model="userDocumentInfo.dateOfBirth"
                       ></v-text-field>
                     </template>
                     <v-date-picker
@@ -162,8 +233,10 @@
                 <v-col cols="12" sm="4" class="py-0">
                   <v-text-field
                     label="Personal Tax ID "
+                    :rules="taxIdRules"
                     v-model="userDocumentInfo.personalTaxId"
                     color="primary"
+                    counter="18"
                     outlined
                     dense
                     :disabled="userDocumentInfo.statusId == 'DOC_APPROVED'"
@@ -176,6 +249,7 @@
                     v-model="userDocumentInfo.address"
                     color="primary"
                     :rules="addressRules"
+                    counter="150"
                     outlined
                     dense
                     :disabled="userDocumentInfo.statusId == 'DOC_APPROVED'"
@@ -187,9 +261,11 @@
                     label="City"
                     v-model="userDocumentInfo.city"
                     :rules="cityRules"
+                    counter="15"
                     color="primary"
                     outlined
                     dense
+                    :disabled="userDocumentInfo.statusId == 'DOC_APPROVED'"
                   >
                   </v-text-field>
                 </v-col>
@@ -211,6 +287,7 @@
                     v-model="userDocumentInfo.postalCode"
                     color="primary"
                     :rules="postalCodeRules"
+                    counter="9"
                     outlined
                     dense
                     :disabled="userDocumentInfo.statusId == 'DOC_APPROVED'"
@@ -221,11 +298,12 @@
                   <v-text-field
                     label="Country of Birth"
                     v-model="userDocumentInfo.countryOfBirth"
+                    color="primary"
+                    :rules="countryOfBirthRules"
+                    counter="25"
                     outlined
                     dense
-                    hide-details
                     :disabled="userDocumentInfo.statusId == 'DOC_APPROVED'"
-                    :rules="countryOfBirthRules"
                   >
                   </v-text-field>
                 </v-col>
@@ -241,6 +319,7 @@
                       v-model="userDocumentInfo.companyName"
                       color="primary"
                       :rules="businessNameRules"
+                      counter="25"
                       outlined
                       dense
                       :disabled="userDocumentInfo.statusId == 'DOC_APPROVED'"
@@ -251,23 +330,25 @@
                   <v-col cols="12" sm="4" class="py-0">
                     <v-text-field
                       label="Company registration number"
+                      :rules="companyRegistrationRules"
                       v-model="userDocumentInfo.companyRegistrationNumber"
+                      counter="25"
                       outlined
                       dense
                       :disabled="userDocumentInfo.statusId == 'DOC_APPROVED'"
-                      :rules="companyRegistrationRules"
                     >
                     </v-text-field>
                   </v-col>
                   <v-col cols="12" sm="4" class="py-0">
                     <v-text-field
                       label="Incorportation Country"
+                      :rules="incorportationCountryRules"
                       v-model="userDocumentInfo.incorporationCountry"
+                      counter="16"
                       color="primary"
                       outlined
                       dense
                       :disabled="userDocumentInfo.statusId == 'DOC_APPROVED'"
-                      :rules="incorportationCountryRules"
                     >
                     </v-text-field>
                   </v-col>
@@ -276,9 +357,9 @@
                       label="VAT ID"
                       :rules="vatIdRules"
                       v-model="userDocumentInfo.vatId"
+                      counter="20"
                       color="primary"
                       outlined
-                      hide-details
                       dense
                       :disabled="userDocumentInfo.statusId == 'DOC_APPROVED'"
                     >
@@ -715,7 +796,10 @@
                       style="color: rgb(231, 87, 83); cursor: pointer"
                       @click="viewDocument(statusData)"
                       >open_in_browser</i
-                    >
+                    > - 
+                <a href="javascript:void(0)" @click="getDocumentData(orderDetails)">{{
+                  orderDetails.documentInfoId
+                }}</a>
                   </td>
                   <td
                     v-if="statusData.requireDocument == 'N'"
@@ -734,8 +818,8 @@
                       :disabled="statusData.didStatus === 'DID_ACTIVATED'"
                       @click="openAptoveDialog(statusData)"
                     >
-                      <v-icon color="green"> phone</v-icon></v-btn
-                    >
+                      <v-icon color="green"> phone</v-icon> </v-btn
+                    > 
                   </td>
                   <td v-if="orderDetails.identityStatusId != 'DOC_APPROVED'">
                     <v-btn
@@ -805,6 +889,14 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+     <!-- view user identity data -->
+    <v-dialog v-model="viewUserDocumentList" max-width="90%">
+      <uploadDocumentsVue
+        :userDocumentInfo="userDocumentInfo"
+        @close-user-modal="closeUserModal"
+      />
+    </v-dialog>
   </v-container>
 </template>
 
@@ -814,11 +906,14 @@ import orderAPI from "@/services/orderAPI.js";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
+import { countryCodeOptions, getFlagURL } from "./countryCodeOptionsList";
+import uploadDocumentsVue from "../../components/uploadDocuments.vue";
 
 export default {
   mixins: [AllApiCalls],
   components: {
     Loading,
+    uploadDocumentsVue,
   },
   data() {
     return {
@@ -834,6 +929,8 @@ export default {
       userFormDialog: false,
       isLoading: false,
       loader: "bars",
+      maxCharacters: 70,
+      countryCodeOptions: [],
       userDocumentInfo: {
         documentInfoId: "",
       },
@@ -898,8 +995,13 @@ export default {
       isFormValid: true,
       valid: true,
       submitLoader: false,
+      taxIdRules: [
+        (v) => (v && v.length >= 18 ? "Maximum 18 characters allowed" : true),
+        (v) =>
+          /[^\w\s]/.test(v) ? "Special characters are not allowed" : true,
+      ],
       firstNameRules: [
-        (v) => !!v || "Field is reuired",
+        (v) => !!v || "Field is required",
         (v) => (v && v.length <= 70) || "Maximum 70 characters allowed",
         (v) =>
           /[^\w\s]/.test(v) ? "Special characters are not allowed" : true,
@@ -910,18 +1012,28 @@ export default {
           /[^\w\s]/.test(v) ? "Special characters are not allowed" : true,
       ],
       lastNameRules: [
-        (v) => !!v || "Field is reuired",
+        (v) => !!v || "Field is required",
         (v) => (v && v.length <= 70) || "Maximum 70 characters allowed",
         (v) =>
           /[^\w\s]/.test(v) ? "Special characters are not allowed" : true,
       ],
-      addressRules: [
-        (v) => !!v || "Field is reuired",
-        (v) => (v && v.length <= 82) || "Maximum 82 characters allowed",
-
-        (v) =>
-          /[^\w\s]/.test(v) ? "Special characters are not allowed" : true,
+      mobileNumberRules: [
+        (v) => !!v || "Field is required", // Check if the field is filled
+        (v) => (v && v.length >= 8) || "Minimum 8 digits required", // Minimum length check
+        (v) => (v && v.length <= 15) || "Maximum 15 digits allowed", // Maximum length check
+        (v) => /^\d+$/.test(v) || "Only numeric values are allowed", // Only numeric check
       ],
+      countryCodeRules: [
+        (v) => !!v || "Field is required", // Check if the field is filled
+        // (v) => v.length > 0 || "Please select a country code"  // Ensures a country code is selected
+      ],
+      addressRules: [
+        (v) => !!v || "Field is required",
+        (v) => (v && v.length <= 150) || "Maximum 150 characters allowed",
+        (v) =>
+          /^[a-zA-Z0-9,\-/. ]*$/.test(v) || "Only alphabets, numbers, '-', '/', ',' and '.' are allowed",
+      ],
+
       cityRules: [
         (v) => !!v || "this value is required",
         (v) => (v && v.length <= 15) || "Maximum 15 characters allowed",
@@ -940,34 +1052,37 @@ export default {
           /^[a-zA-Z0-9\-\s- ]{0,9}$/.test(v) ||
           "pin code can only contain letters, numbers, spaces and hyphens",
       ],
-      countryOfBirthRules: [
-        (v) => (v && v.length >= 9 ? "Maximum 18 characters allowed" : true),
-        (v) =>
-          /[^\w\s]/.test(v) ? "Special characters are not allowed" : true,
-      ],
+      // countryOfBirthRules: [
+      //   (v) => (v && v.length >= 9 ? "Maximum 18 characters allowed" : true),
+      //   (v) =>
+      //     /[^\w\s]/.test(v) ? "Special characters are not allowed" : true,
+      // ],
       businessNameRules: [
         (v) => !!v || "Field is required",
         (v) =>
-          /[^\w\s]/.test(v) ? "Special characters are not allowed" : true,
+          /^[a-zA-Z0-9. ]{1,25}$/.test(v) || "Only letters, numbers, spaces, and '.' are allowed (max 25 characters)",
       ],
-      documentrules: [(v) => !!v || "Field is required"],
       vatIdRules: [
         (v) =>
-          /[^\w\s]/.test(v) ? "Special characters are not allowed" : true,
+          !v || /^[a-zA-Z0-9-]{1,20}$/.test(v) || "Only letters, numbers, and '-' are allowed (max 20 characters)",
       ],
       companyRegistrationRules: [
         (v) =>
-          /[^\w\s]/.test(v) ? "Special characters are not allowed" : true,
+           !v || /^[a-zA-Z0-9]{1,25}$/.test(v) || "Only letters and numbers are allowed (max 25 characters)",
       ],
       incorportationCountryRules: [
-        (v) =>
-          /[^\w\s]/.test(v) ? "Special characters are not allowed" : true,
+        (v) => !v || /^[a-zA-Z]{1,16}$/.test(v) || "Only letters are allowed (max 16 characters)",
       ],
       FileUploadrules: [
         (v) =>
           !v ||
           v.size <= 3000000 ||
           "file size should be less than or equal to 3 Mb!",
+      ],
+      countryOfBirthRules: [
+        (v) => !!v || "Field is required", // Check if the field is filled
+        (v) => (v && v.length <= 25) || "Maximum 25 characters allowed", // Maximum length check
+        (v) => /^[^\d]+$/.test(v) || "Numeric values are not allowed", // No numeric values allowed
       ],
       uploadInfoInputs: [],
       dateMenu: "",
@@ -1013,9 +1128,11 @@ export default {
       aproveModal: false,
       aporveNumberData: {},
       selectedIdentity: "",
+      viewUserDocumentList: false,
     };
   },
   methods: {
+    getFlagURL,
     async getOrderDetail() {
       this.isLoading = true;
       let response = await this.getMethod("getOrderDetail", {
@@ -1106,6 +1223,38 @@ export default {
       }
     },
 
+    //  get Document Info
+    async getDocumentData(getIdentity) {
+      this.isLoading = true;
+      let payloadApproveIdentity = {
+        partyId: getIdentity.partyId,
+        documentInfoId: getIdentity.documentInfoId,
+      };
+      try {
+        let response = await this.getMethod(
+          "getDocumentInfoForAdmin",
+          payloadApproveIdentity
+        );
+        
+        let username = {
+          name: response.name,
+        };
+
+        this.userDocumentInfo = {
+          ...response.documentInfoResult,
+          ...username,
+          ...response.outList[0],
+        };
+        this.viewUserDocumentList = true;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+        console.log("====error===", error);
+      }
+    },
+    closeUserModal() {
+      this.viewUserDocumentList = false;
+    },
     async viewDocument(item) {
       // console.log("item", item);
       this.userFormDialog = true;
@@ -1236,9 +1385,9 @@ export default {
     // convert timestamp to date format
     converUnixToDate(dateOfBirth) {
       if (dateOfBirth) {
-        const dateString = moment.unix(dateOfBirth / 1000).format("YYYY-MM-DD");
+        // Convert PostgreSQL timestamp to a valid date string
+        const dateString = moment(dateOfBirth).format("YYYY-MM-DD");
         this.userDocumentInfo.dateOfBirth = dateString;
-        // return dateString;
       }
     },
     //upload document functionality
@@ -1347,22 +1496,6 @@ export default {
     },
 
     async submitUserForm(documentInfoId) {
-      // var fillForm = null;
-      // this.$refs.validform.validate();
-      // var userDocumentInfoArray = Object.values(this.userDocumentInfo);
-      // if (this.getTotalFormLength.length != 0) {
-      //   for (var i = 0; i < this.getTotalFormLength.length; i++) {
-      //     if (this.getTotalFormLength[i] != userDocumentInfoArray[i]) {
-      //       fillForm = true;
-      //     } else if (this.getTotalFormLength[i] == userDocumentInfoArray[i]) {
-      //       if (fillForm != true) {
-      //       }
-      //     }
-      //   }
-      // } else {
-      //   fillForm = true;
-      // }
-      //part Id
       var submitForm = false;
 
       if (this.outList.length != 0) {
@@ -1405,6 +1538,7 @@ export default {
             this.submitLoader = false;
             this.userFormDialog = false;
             submitForm = false;
+            this.getOrderDetail();
             this.submitForm = false;
             this.userDocumentInfo.documentInfoId = {};
             this.userDocumentInfo = {};
@@ -1426,48 +1560,7 @@ export default {
             });
             this.submitLoader = false;
           }
-          // } else {
-          // if (this.userDocumentInfo.documentInfoId) {
-          //   this.submitLoader = true;
-          //   this.orderDetail.forEach((element) => {
-          //     this.orderDetail.orderId = element.orderId;
-          //   });
-          //   try {
-          //     let response = await orderAPI.setInventoryItemDocInfo({
-          //       orderId: this.orderDetails.orderId,
-          //       geoId: this.getGeoIdForDoc,
-          //       inventoryItemId: this.inventoryItemId,
-          //       documentInfoId: this.userDocumentInfo.documentInfoId,
-          //     });
-          //     this.document.documentInfoId = response.outMap.documentInfoId;
-          //     this.showIndex++;
-          //     this.uploadInfoInputs = [
-          //       {
-          //         uploadFileKey: null,
-          //         uploadFile: null,
-          //       },
-          //     ];
-          //     this.uploadDidAttachment();
-          //     fillForm = null;
-          //     this.userDocumentInfo.documentInfoId = {};
-          //     this.userDocumentInfo = {};
-          //     this.document = {};
-          //     this.$refs.form.reset();
-          //     this.$refs.validform.reset();
-          //     this.$root.$emit("SHOW_SNACKBAR", {
-          //       text: response.responseMessage,
-          //       color: "success",
-          //     });
-          //     this.submitLoader = false;
-          //   } catch (error) {
-          //     this.$root.$emit("SHOW_SNACKBAR", {
-          //       text: "something wrong",
-          //       color: "error",
-          //     });
-          //     this.submitLoader = false;
-          //   }
-          // }
-          // }
+
         } else {
           this.$root.$emit("SHOW_SNACKBAR", {
             text: "Please upload documents!",
@@ -1496,24 +1589,6 @@ export default {
         color: "success",
       });
     },
-
-    // async getOrderDetail() {
-    //   this.isLoading = true;
-    //   try {
-    //     let response = await orderAPI.getOrderDetail(
-    //       this.$route.params.orderId
-    //     );
-    //     this.isLoading = false;
-    //     this.orderDetail.push(response.orderDetails);
-    //     this.orderDetailList = response.orderDetails.orderItemList;
-    //     this.orderInventoryItemId = {
-    //       ...this.orderDetailList,
-    //       ...response.orderDetails.orderItemList,
-    //     };
-    //   } catch (error) {
-    //     this.isLoading = false;
-    //   }
-    // },
 
     capitalizeText(str) {
       str = str.replace("_", " ").toLowerCase();
@@ -1619,9 +1694,10 @@ export default {
   },
 
   mounted() {
+    this.countryCodeOptions = countryCodeOptions;
     // this.userDetail = JSON.parse(localStorage.getItem("userDetail"));
     this.addRow();
-    this.getOrderDetail();
+    // this.getOrderDetail();
   },
 
   async created() {
