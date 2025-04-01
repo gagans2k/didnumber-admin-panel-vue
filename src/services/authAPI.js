@@ -13,6 +13,8 @@ const login = (payload) => {
 		});
 	});
 
+	
+
 
 	// var userdata = {
 	// 	username: payload.username,
@@ -23,6 +25,16 @@ const login = (payload) => {
 	// }).catch((err) => {
 	// 	return cb(err, null);
 	// });
+};
+
+const verifySecurityGoogleAuthenticator = (payload) => {
+	return new Promise((resolve, reject) => {
+		http.post('/verifySecurityGoogleAuthenticator', payload).then((data) => {
+			resolve(data);
+		}).catch((err) => {
+			reject(err);
+		});
+	});
 };
 
 // const createAccount = (payload) => {
@@ -181,6 +193,7 @@ const login = (payload) => {
 
 module.exports = {
 	login,
+	verifySecurityGoogleAuthenticator
 	// createAccount,
 	// forgotPassword,
 	// getSecurityList,

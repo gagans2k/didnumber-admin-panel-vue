@@ -65,7 +65,7 @@
           dark
           :to="{ name: 'Billing Account Transactions' }">
           <v-card-subtitle >Billing A/C Transaction's </v-card-subtitle>
-          <v-card-text v-bind="attrs" v-on="on" ><span class="font-weight-medium text-h6">{{ paypalTransactions }} - {{ customerTransactions }}</span></v-card-text>
+          <v-card-text><span class="font-weight-medium text-h6">{{ paypalTransactions }} - {{ customerTransactions }}</span></v-card-text>
         </v-card>
       </v-col>
       <v-col xs="12" sm="4" md="3">

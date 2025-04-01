@@ -27,6 +27,29 @@
         </v-dialog>
         <template>
           <v-row justify="center">
+            <v-dialog v-model="showErrorTwoFactordDalog" max-width="290">
+              <v-card>
+                <v-card-title class="headline">
+                  {{ printErrorMessageTitle }}
+                </v-card-title>
+
+                <v-card-text>
+                  {{ printErrorMessage }}
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+
+                  <!-- <v-btn color="green darken-1" text @click="canceldialogPopUp">
+                    Cancel
+                  </v-btn> -->
+
+                  <v-btn color="green darken-1" text @click="closeDialogPopUp">
+                    OK
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
             <v-dialog v-model="showErrordialog" max-width="290">
               <v-card>
                 <v-card-title class="headline">
@@ -51,6 +74,59 @@
               </v-card>
             </v-dialog>
           </v-row>
+        </template>
+        <template>
+          <!-- OTP Dialog -->
+          <v-dialog v-model="otpDialogVisible" max-width="600">
+            <v-card>
+              <v-card-title>
+                <v-row>
+                  <v-col>
+                    <span class="headline font-weight-bold">
+                      Quick Security Check
+                    </span>
+                  </v-col>
+                </v-row>
+              </v-card-title>
+              <v-divider></v-divider>
+              <v-card-text class="text-center pb-0 mb-0">
+                <h3>Enter your verification code</h3>
+                <p>Use Authenticator app to generate a code and enter it below to sign in</p>
+                <v-row justify="center">
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="verificationCode"
+                      :rules="verificationCodeRules"
+                      label="Enter verification code"
+                      outlined
+                      dense
+                      required
+                      maxlength="6"
+                      counter="6"
+                    ></v-text-field>
+                    <div class="italic-text mt-2">
+                      For any queries, please contact
+                      <a href="mailto:customer.support@didnumberprovider.com">
+                        customer.support@didnumberprovider.com
+                      </a>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+              <v-divider></v-divider>
+              <v-card-actions>
+                <v-btn color="blue darken-1" text @click="canceldialogPopUp">
+                  Cancel
+                </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn color="primary"                   
+                  :disabled="!isVerificationCodeValid"
+                  @click="verifySecurityGoogleAuthenticator">
+                    Proceed
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </template>
         <v-col cols="12">
           <v-row class="pt-15" align="center" justify="center">
@@ -149,11 +225,19 @@ export default {
       showPassword: false,
       checkbox: false,
       backgroundUrl: backgroundUrl,
+      otpDialogVisible: false,
+      verificationCode: "",
+      verificationCodeRules: [
+        (v) => !!v || "Verification code is required.",
+        (v) => /^[0-9]+$/.test(v) || "Verification code must be numeric.",
+        (v) => v.length === 6 || "Verification code must be exactly 6 digits.",
+      ],
+      showErrorTwoFactordDalog: false,
     };
   },
 
   components: {
-    Loading,
+    Loading
   },
 
   mounted() {
@@ -161,6 +245,12 @@ export default {
       this.$router.push("/Dashboard");
     }
     this.readDataFromAPI();
+  },
+
+  computed: {
+    isVerificationCodeValid() {
+      return this.verificationCodeRules.every((rule) => rule(this.verificationCode) === true);
+    }
   },
 
   methods: {
@@ -171,6 +261,12 @@ export default {
 
     canceldialogPopUp() {
       this.showErrordialog = false;
+      this.otpDialogVisible = false;
+      this.showErrorTwoFactordDalog = false;
+    },
+
+    closeDialogPopUp() {
+      this.showErrorTwoFactordDalog = false;
     },
 
     readDataFromAPI() {
@@ -187,6 +283,100 @@ export default {
         //Then injecting the result to datatable parameters.
         this.loading = false;
       });
+    },
+
+    async verifySecurityGoogleAuthenticator() {
+      this.isLoading = true;
+
+      // Validate verification code before making the API call
+      if (!this.verificationCode || this.verificationCode.trim() === "") {
+        this.$root.$emit("SHOW_SNACKBAR", {
+          text: "Verification code cannot be empty.",
+          color: "error",
+        });
+        this.isLoading = false;
+        return;
+      }
+
+      // Retrieve user data from local storage
+      const userLoginId = localStorage.getItem("nameOfUser");
+      this.userLoginId = window.atob(userLoginId);
+      const password = localStorage.getItem("passwordOfUser");
+      this.password = window.atob(password);
+      const geoLocation = localStorage.getItem("countryCode") || "IN"; // Default to "IN" if not set
+
+      const sendVerificationPayload = {
+        verificationCode: this.verificationCode,
+        password: this.password,
+        geoLocation,
+        username: this.userLoginId,
+      };
+      try {
+        // Call API to verify the Google Authenticator code
+        const res = await authAPI.verifySecurityGoogleAuthenticator(sendVerificationPayload);
+
+        if (res.partyDetail) {
+          if (
+            res.partyDetail &&
+            res.partyDetail.isAuthenticated == true &&
+            res.partyDetail.role == "ADMIN"
+          ) {
+            // } else {
+            localStorage.setItem("authToken", "Basic " + btoa(`${this.userLoginId}:${this.password}`));
+            //localStorage.setItem("sessionId", res.sessionId);
+            localStorage.setItem("userDetail", JSON.stringify(res.partyDetail));
+            localStorage.setItem(
+              "auth",
+                  btoa(`${this.userLoginId}:${this.password}`)
+            );
+            this.$router.push("/dashboard");
+            localStorage.setItem("authNew", res.partyDetail.authToken);
+            this.text = res.responseMessage;
+            this.$root.$emit("SHOW_SNACKBAR", {
+              text: "You are successfully logged in",
+              color: "success",
+            });
+            setTimeout(() => {
+              this.isLoading = false;
+            }, 3000);
+          } else {
+            this.showMessage = "You cannot login to this application!";
+            this.showMessageSnackbar = true;
+            this.isLoading = false;
+            // this.$refs.isFormValid.reset();
+            // localStorage.clear();
+          }
+        } else {
+          // Show message
+          this.showMessage = res.successMessage;
+          this.showMessageSnackbar = true;
+          this.isLoading = false;
+        }
+      } catch (error) {
+        // Handle API errors
+        let errorMessage = "Failed to verify the code. Please try again.";
+        console.log("Data: ", JSON.stringify(error));
+        if (error.data && error.data.messageDetail) {
+          errorMessage =  JSON.stringify(error.data.messageDetail);
+        }
+        console.log("errorMessage: ", errorMessage);
+        this.emailAddress = this.userLoginId;
+        localStorage.setItem(
+          "nameOfUser",
+          window.btoa(this.userLoginId)
+        );
+        localStorage.setItem(
+          "passwordOfUser",
+          window.btoa(this.password)
+        );
+      
+        this.showErrorTwoFactordDalog = true;
+        this.printErrorMessage = errorMessage;
+          // location.href = "/";
+      } finally {
+        // Ensure loading indicator is turned off
+        this.isLoading = false;
+      }
     },
 
     async login() {
@@ -239,6 +429,19 @@ export default {
       } catch (err) {
         this.showErrordialog = true;
         this.printErrorMessage = err && err.data && err.data.messageDetail;
+        if(this.printErrorMessage == "Google Authenticator Enabled"){
+          this.otpDialogVisible = true;
+          this.isLoading = false;
+            this.emailAddress = this.loginData.username;
+            localStorage.setItem(
+              "nameOfUser",
+              window.btoa(this.loginData.username)
+            );
+            localStorage.setItem(
+              "passwordOfUser",
+              window.btoa(this.loginData.password)
+            );
+        }
         this.printErrorMessageTitle =
           err && err.data && err.data.responseMessage;
         this.$root.$emit("SHOW_SNACKBAR", {
