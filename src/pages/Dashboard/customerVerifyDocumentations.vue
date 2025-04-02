@@ -17,20 +17,20 @@
     <!-- SEARCH -->
     <v-card elevation="0">
       <v-container fluid>
-        <!-- <v-row> -->
-          <!-- <v-col lg="3" md="3" sm="12" class="pb-1">
-            <v-text-field
-              v-model="search"
-              append-icon="search"
-              label="Search by party id"
-              @keyup.native="searchOnServer(search)"
-              hide-details
+        <v-row>
+          <v-col lg="3" md="3" sm="12" class="pb-1">
+            <v-autocomplete 
+              v-model="statusId"
+              :items="statusIds"
+              label="Search By Status"
+              item-text="key"
+              item-value="value"
               outlined
               dense
-            >
-            </v-text-field>
-          </v-col> -->
-        <!-- </v-row> -->
+              @change="searchOnServer(statusId)"
+            ></v-autocomplete>
+          </v-col> 
+        </v-row>
         <!-- DATA TABLE-->
         <v-row>
           <v-col>
@@ -205,7 +205,13 @@ export default {
       ],
       totalItems: 0,
       options: {},
-     
+      statusId: "",
+      statusIds: [
+        { value: "S", key: "Submitted"},
+        { value: "Y", key: "Approved" },
+        { value: "R", key: "Rejected" },
+        { key: "ALL", value: "VERIFY_ALL" },
+      ],
       statusDialog: false,
       selectedStatus: '',
       statusMessage: '',
@@ -247,7 +253,7 @@ export default {
       this.isLoading = true;
       const { sortBy, sortDesc, page, itemsPerPage } = this.options;
       let response = await this.getMethod("getVerifyDocs", {
-        partyId: searchCode,
+        isIdentityVerified: searchCode,
       });
       this.itemsReqestArray = response.verifyDocs;
       this.totalItems = response.listSize;
