@@ -6,7 +6,19 @@
         <v-card-actions>
           <v-card-title>Rate Data</v-card-title>
           <v-spacer></v-spacer>
-
+          <v-row align="center" justify="center">
+            <v-card-actions>
+              <v-btn
+                depressed
+                class="primary-btn"
+                outlined
+                to="/ratelist"
+                @click="deleteGeoId()"
+              >
+                Rate List
+              </v-btn>
+            </v-card-actions>
+          </v-row>
           <!-- <div class="text-camelcase">
             <v-col cols="2">
               <i
@@ -69,6 +81,19 @@
         <v-card-actions>
           <v-card-title>Location Data</v-card-title>
           <v-spacer></v-spacer>
+          <v-row align="center" justify="center">
+          <v-card-actions>
+            <v-btn
+              depressed
+              class="primary-btn"
+              outlined
+              to="/didCountry"
+              @click="deleteGeoId()"
+            >
+              DID Countries
+            </v-btn>
+          </v-card-actions>
+        </v-row>
           <!-- <div class="text-camelcase">
             <v-col cols="2">
               <i
@@ -145,6 +170,19 @@
         <v-card-actions>
           <v-card-title>Enable/Disable Location</v-card-title>
           <v-spacer></v-spacer>
+          <v-row align="center" justify="center">
+            <v-card-actions>
+              <v-btn
+                depressed
+                class="primary-btn"
+                outlined
+                to="/didCountry"
+                @click="deleteGeoId()"
+              >
+                DID Countries
+              </v-btn>
+            </v-card-actions>
+          </v-row>
           <!-- <v-col cols="1">
             <i
               class="bibtn"
