@@ -131,18 +131,10 @@
                 <span class="title"> Wallet Balance </span>
               </v-col>
               <v-spacer></v-spacer>
-              <v-col xs="12" sm="1">
-                <v-btn
-                  dark
-                  block
-                  color="rgb(231,87,83)"
-                  :to="{
-                    name: 'AccountDetails',
-                    query: $route.query,
-                  }"
-                  >Back</v-btn
-                >
-              </v-col>
+              <v-toolbar elevation="0">
+                <v-spacer></v-spacer>
+                <v-btn @click="back()" outlined class="error mt-2" dark>BACK</v-btn>
+              </v-toolbar>
             </v-row>
             <!-- Available wallet balance -->
             <v-row>
@@ -202,18 +194,10 @@
                 <span class="title text-weight-bold"> PSTN Balance </span>
               </v-col>
               <v-spacer></v-spacer>
-              <v-col xs="12" sm="1">
-                <v-btn
-                  dark
-                  block
-                  color="rgb(231,87,83)"
-                  :to="{
-                    name: 'AccountDetails',
-                    query: $route.query,
-                  }"
-                  >Back</v-btn
-                >
-              </v-col>
+              <v-toolbar elevation="0">
+                <v-spacer></v-spacer>
+                <v-btn @click="back()" outlined class="error mt-2" dark>BACK</v-btn>
+              </v-toolbar>
             </v-row>
             <!-- Available PSTN balance -->
             <v-row>
@@ -386,6 +370,10 @@ export default {
         this.seeSnackbar("Correct the highlighted fields", "warning");
         this.submitLoader = false;
       }
+    },
+
+    back() {
+      this.$router.go(-1);
     },
 
     async getPaymentMethod() {

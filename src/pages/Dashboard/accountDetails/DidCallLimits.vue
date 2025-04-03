@@ -32,18 +32,10 @@
         ></v-text-field>
       </v-col> -->
       <v-spacer></v-spacer>
-      <v-col xs="12" sm="1">
-        <v-btn
-          dark
-          block
-          color="rgb(231,87,83)"
-          :to="{
-            name: 'AccountDetails',
-            query: $route.query,
-          }"
-          >Back</v-btn
-        >
-      </v-col>
+      <v-toolbar elevation="0">
+        <v-spacer></v-spacer>
+        <v-btn @click="back()" outlined class="error mt-2" dark>BACK</v-btn>
+      </v-toolbar>
     </v-row>
     <!-- DATA TABLE-->
     <v-row>
@@ -194,6 +186,9 @@ export default {
         //this.isLoading = false;
       }
       //this.isLoading = false;
+    },
+    back() {
+      this.$router.go(-1);
     },
 
     deleteItemConfirm(){},

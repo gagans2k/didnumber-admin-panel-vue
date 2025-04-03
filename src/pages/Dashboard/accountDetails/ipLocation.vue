@@ -19,18 +19,10 @@
           ></v-text-field>
         </v-col> -->
         <v-spacer></v-spacer>
-        <v-col xs="12" sm="1" md="1">
-          <v-btn
-            dark
-            block
-            color="rgb(231,87,83)"
-            :to="{
-              name: 'AccountList',
-            }"
-            >Back</v-btn
-          >
-        </v-col>
-      </v-row>
+        <v-toolbar elevation="0">
+          <v-spacer></v-spacer>
+          <v-btn @click="back()" outlined class="error mt-2" dark>BACK</v-btn>
+        </v-toolbar>      </v-row>
       <!-- DATA TABLE-->
       <v-row>
         <v-col xs="12">
@@ -112,6 +104,10 @@ export default {
   mounted() {
     // this.userDetail = JSON.parse(localStorage.getItem("userDetail"));
   },
-  methods: {},
+  methods: {
+    back() {
+      this.$router.go(-1);
+    }
+  },
 };
 </script>
