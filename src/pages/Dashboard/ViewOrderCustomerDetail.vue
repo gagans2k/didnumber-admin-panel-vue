@@ -570,46 +570,6 @@
           <v-spacer></v-spacer>
           <v-btn @click="back()" outlined class="error mt-2" dark>BACK</v-btn>
         </v-toolbar>
-        <!-- <div class="bckbtn">
-          <v-row justify="end">
-            <v-col cols="1"> -->
-        <!-- <v-btn
-          color="rgb(231,87,83)"
-          dark
-          block
-          @click="$router.go(-1)"
-          >Back</v-btn -->
-
-        <!-- <v-spacer></v-spacer> -->
-        <!-- <v-col class="btn" xs="12" sm="2" md="1">
-        <v-btn
-          dark
-          block
-          color="rgb(231,87,83)"
-          :to="{
-            name: 'Dashboard',
-          }"
-          >Back</v-btn
-        >
-            </v-col> -->
-
-        <!-- Back button -->
-        <!-- <v-spacer></v-spacer>
-              <v-btn
-                class="btn"
-                xs="12"
-                sm="1"
-                md="1"
-                color="rgb(231,87,83)"
-                dark
-                @click="$router.go(-1)"
-              >
-                Back
-              </v-btn>
-            </v-col>
-          </v-row>
-        </div> -->
-        <!-- <hr /> -->
         <!-- NAME -->
         <v-row>
           <v-col cols="2">

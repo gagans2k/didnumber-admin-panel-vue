@@ -88,6 +88,31 @@
             ></v-switch>
           </template>
 
+          <template v-slot:[`item.accountDetails`]="{ item }">
+              <!-- {{item}} -->
+              <router-link
+                :to="{
+                  name: 'AccountDetails',
+                  query: {
+                    accountId: item.accountId,
+                    userId: item.userId,
+                    partyId: item.partyId,
+                  },
+                }"
+                
+              >
+                <v-btn 
+                class="mr-1"
+                color="info" 
+                outlined 
+                small 
+                fab
+                >
+                <v-icon>subject</v-icon>
+                </v-btn>
+              </router-link>
+          </template>
+
           <!-- fromDate -->
           <template v-slot:[`item.fromDate`]="{ item }">
             {{ item.fromDate ? moment(item.fromDate).format("MMMM DD, YYYY, HH:mm") : '......................' }}
@@ -125,6 +150,7 @@ export default {
         { text: "Action", value: "enabledTwoFactor", sortable: false  },
         { text: "Start Date Time", value: "fromDate", sortable: false},
         { text: "Authentication Type", value: "authenticationTypeLabel",sortable: false},
+        { text: "Account Detail's", value: "accountDetails", sortable: false }
       ],
       totalItems: 0,
       options: {},

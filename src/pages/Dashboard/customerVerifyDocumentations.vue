@@ -90,6 +90,22 @@
                 </router-link>
               </template>
 
+
+              <template v-slot:[`item.orderDetails`]="{ item }">
+                <!-- {{item}} -->
+                <router-link
+                  :to="{
+                    name: 'Customer Order List',
+                    query: { createdBy: item.emailAddress },
+                  }"
+                  
+                >
+                <v-btn class="mr-1" color="red"  outlined small fab>
+                <v-icon> description</v-icon>
+                </v-btn>
+                </router-link>
+              </template>
+
               <template v-slot:[`item.isIdentityVerified`]="{ item }">
                 <!-- Button to trigger the dialog -->
                 <v-btn
@@ -202,6 +218,7 @@ export default {
         { text: "User Login", value: "emailAddress", sortable: false },
         { text: "Action", value: "isIdentityVerified", sortable: false },
         { text: "Account Detail's", value: "accountDetails", sortable: false },
+        { text: "Order Detail's", value: "orderDetails", sortable: false },
       ],
       totalItems: 0,
       options: {},

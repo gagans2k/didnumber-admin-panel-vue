@@ -33,15 +33,7 @@
       </v-col> -->
       <v-spacer></v-spacer>
        <v-col xs="12" sm="1" md="1">
-        <v-btn
-          dark
-          block
-          color="rgb(231,87,83)"
-          :to="{
-            name: 'AccountList',
-          }"
-          >Back</v-btn
-        >
+        <v-btn @click="back()" outlined class="error mt-2" dark>BACK</v-btn>
       </v-col>
     </v-row>
     <!-- DATA TABLE-->
@@ -61,6 +53,23 @@
           <template v-slot:[`item.orderDate`]="{ item }">{{
             moment(item.orderDate).format("MMMM DD, YYYY")
           }}</template>
+          <!-- View Order Detail -->
+          <template v-slot:[`item.viewDetails`]="{ item }">
+            <router-link
+              :to="{
+                name: 'Order Detail',
+                query: { orderId: item.orderId,partyId: item.partyId},
+              }"
+              style="text-decoration: none !important"
+            >
+              <v-btn outlined fab small color="info" size="25"><v-icon >visibility</v-icon></v-btn>
+            </router-link>
+          </template>
+           <template v-slot:[`item.statusId`]="{ item }">
+            <span v-if="item.statusId == 'ORDER_APPROVED'">Approved</span>
+            <span v-if="item.statusId == 'ORDER_CREATED'">Created</span>
+            <span v-if="item.statusId == 'ORDER_CANCELLED'">Cancel</span>
+          </template>
         </v-data-table>
       </v-col>
     </v-row>
@@ -88,11 +97,15 @@ export default {
       copyOfEmail: "",
       items: [],
       headers: [
+        { text: "Email", value: "emailAddress",sortable: false},
+        { text: "Identity Verified", value: "isIdentityVerified",width: "5%",sortable: false},
         { text: "Order Type",value: "orderType",sortable: false},
         { text: "Status", value: "statusId",sortable: false },
         { text: "Order Id", value: "orderId",sortable: false },
         { text: "created Date", value: "orderDate",sortable: false },
         { text: "Grand Total", value: "grandTotal",sortable: false },
+        { text: "Identity", value: "documentInfoId",sortable: false},
+        { text: "Detail",value: "viewDetails",width:"5%" ,sortable: false}
       ],
       totalItems: 0,
       options: {},
@@ -129,6 +142,9 @@ export default {
       this.items = response.orderList;
       this.totalItems = response.listSize;
       this.isLoading = false;
+    },
+    back() {
+      this.$router.go(-1);
     },
   },
 };
