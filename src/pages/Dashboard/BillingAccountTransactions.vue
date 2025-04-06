@@ -384,6 +384,16 @@ export default {
           value: "indexNo",
           width: "5%",
         },
+        { 
+          text: "Account ID", 
+          value: "partyId", 
+          sortable: false 
+        },
+        {
+          text: "Verified",
+          value: "isVerified",
+          sortable: false,
+        },
         {
           text: "Amount",
           align: "start",

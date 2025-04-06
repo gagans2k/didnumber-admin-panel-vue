@@ -30,6 +30,19 @@
               @change="searchOnServer(statusId)"
             ></v-autocomplete>
           </v-col> 
+           <!-- Buttton -->
+          <v-spacer></v-spacer>
+          <v-col xs="12" sm="2" md="1" class="mt-3">
+            <v-btn
+              dark
+              block
+              color="rgb(231,87,83)"
+              :to="{
+                name: 'Dashboard',
+              }"
+              >Back</v-btn
+            >
+          </v-col>
         </v-row>
         <!-- DATA TABLE-->
         <v-row>

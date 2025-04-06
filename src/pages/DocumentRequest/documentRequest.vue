@@ -204,6 +204,7 @@ export default {
           value: "indexNo",
           sortable: false,
         },
+        { text: "Account ID", value: "partyId", sortable: false },
         { text: "order ID", value: "orderId", sortable: false },
         { text: "Created Date", value: "createdStamp", sortable: false },
         { text: "Identity", value: "documentInfoId", sortable: false },
