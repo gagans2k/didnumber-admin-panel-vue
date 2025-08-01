@@ -220,7 +220,7 @@ import AllApiCalls from "@/services/AllApiCalls";
 import dashboardAPI from "@/services/dashboardAPI.js";
 import ConfirmationBox from "@/pages/common/ConfirmationBox.vue";
 import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
+import "@/assets/vue-loading.css";
 export default {
   components: {
     ConfirmationBox: ConfirmationBox,

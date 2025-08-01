@@ -158,7 +158,7 @@ import shoppingCartAPI from "@/services/shoppingCartAPI.js";
 import billingAccountAPI from "@/services/billingAccountAPI.js";
 import agreementDataTable from "./agreementTable";
 import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
+import "@/assets/vue-loading.css";
 
 export default {
   name: "billingAcc",

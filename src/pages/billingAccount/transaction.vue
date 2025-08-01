@@ -27,7 +27,7 @@ import creditDetailsTable from "./creditDetailsTable";
 import onHoldTable from "./onHoldTable";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
+import "@/assets/vue-loading.css";
 
 export default {
   name: "billingAcc",

@@ -1,22 +1,24 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import { defineStore } from 'pinia';
 
-Vue.use(Vuex);
-
-export default new Vuex.Store({
-	state: {
-		signUpData: {}
-	},
-	getters: {},
-	mutations: {
-		storeSignUpData(state, payload) {
-			state.signUpData = payload;
-		}
-	},
-	actions: {
-		storeSignUpData(context, payload) {
-			context.commit('STORE_SIGNUP_DATA', payload);
-		}
-	},
-	modules: {}
+export const useMainStore = defineStore('main', {
+  state: () => ({
+    signUpData: {},
+    idleVue: {
+      isIdle: false
+    }
+  }),
+  
+  getters: {
+    getSignUpData: (state) => state.signUpData,
+    isIdle: (state) => state.idleVue.isIdle
+  },
+  
+  actions: {
+    storeSignUpData(payload) {
+      this.signUpData = payload;
+    },
+    setIdleStatus(status) {
+      this.idleVue.isIdle = status;
+    }
+  }
 });

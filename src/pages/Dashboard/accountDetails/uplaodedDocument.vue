@@ -201,7 +201,7 @@
 import AllApiCalls from "@/services/AllApiCalls";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
+import "@/assets/vue-loading.css";
 import uploadDocumentsVue from "../../../components/uploadDocuments.vue";
 export default {
   mixins: [AllApiCalls],

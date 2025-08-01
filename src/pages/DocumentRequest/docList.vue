@@ -267,7 +267,7 @@
 <script>
 import moment from "moment";
 import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
+import "@/assets/vue-loading.css";
 import AllApiCalls from "@/services/AllApiCalls";
 
 export default {

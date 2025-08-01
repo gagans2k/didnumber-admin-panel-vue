@@ -656,7 +656,12 @@
             <span
               class="subtitle-1 font-weight-regular"
               v-if="orderDetails.orderItemList[0].itemAdjustment == '0'"
-              >{{(orderDetails.grandTotal / orderDetails.orderItemList[0].unitPrice) | number:0}}</span
+              >{{
+                Math.round(
+                  orderDetails.grandTotal /
+                    orderDetails.orderItemList[0].unitPrice
+                )
+              }}</span
             >
           </v-col>
         </v-row>
@@ -756,10 +761,13 @@
                       style="color: rgb(231, 87, 83); cursor: pointer"
                       @click="viewDocument(statusData)"
                       >open_in_browser</i
-                    > - 
-                <a href="javascript:void(0)" @click="getDocumentData(orderDetails)">{{
-                  orderDetails.documentInfoId
-                }}</a>
+                    >
+                    -
+                    <a
+                      href="javascript:void(0)"
+                      @click="getDocumentData(orderDetails)"
+                      >{{ orderDetails.documentInfoId }}</a
+                    >
                   </td>
                   <td
                     v-if="statusData.requireDocument == 'N'"
@@ -778,8 +786,8 @@
                       :disabled="statusData.didStatus === 'DID_ACTIVATED'"
                       @click="openAptoveDialog(statusData)"
                     >
-                      <v-icon color="green"> phone</v-icon> </v-btn
-                    > 
+                      <v-icon color="green"> phone</v-icon>
+                    </v-btn>
                   </td>
                   <td v-if="orderDetails.identityStatusId != 'DOC_APPROVED'">
                     <v-btn
@@ -850,7 +858,7 @@
       </v-card>
     </v-dialog>
 
-     <!-- view user identity data -->
+    <!-- view user identity data -->
     <v-dialog v-model="viewUserDocumentList" max-width="90%">
       <uploadDocumentsVue
         :userDocumentInfo="userDocumentInfo"
@@ -861,13 +869,13 @@
 </template>
 
 <script>
+import "@/assets/vue-loading.css";
 import AllApiCalls from "@/services/AllApiCalls";
 import orderAPI from "@/services/orderAPI.js";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
-import { countryCodeOptions, getFlagURL } from "./countryCodeOptionsList";
 import uploadDocumentsVue from "../../components/uploadDocuments.vue";
+import { countryCodeOptions, getFlagURL } from "./countryCodeOptionsList";
 
 export default {
   mixins: [AllApiCalls],
@@ -991,7 +999,8 @@ export default {
         (v) => !!v || "Field is required",
         (v) => (v && v.length <= 150) || "Maximum 150 characters allowed",
         (v) =>
-          /^[a-zA-Z0-9,\-/. ]*$/.test(v) || "Only alphabets, numbers, '-', '/', ',' and '.' are allowed",
+          /^[a-zA-Z0-9,\-/. ]*$/.test(v) ||
+          "Only alphabets, numbers, '-', '/', ',' and '.' are allowed",
       ],
 
       cityRules: [
@@ -1020,18 +1029,26 @@ export default {
       businessNameRules: [
         (v) => !!v || "Field is required",
         (v) =>
-          /^[a-zA-Z0-9. ]{1,25}$/.test(v) || "Only letters, numbers, spaces, and '.' are allowed (max 25 characters)",
+          /^[a-zA-Z0-9. ]{1,25}$/.test(v) ||
+          "Only letters, numbers, spaces, and '.' are allowed (max 25 characters)",
       ],
       vatIdRules: [
         (v) =>
-          !v || /^[a-zA-Z0-9-]{1,20}$/.test(v) || "Only letters, numbers, and '-' are allowed (max 20 characters)",
+          !v ||
+          /^[a-zA-Z0-9-]{1,20}$/.test(v) ||
+          "Only letters, numbers, and '-' are allowed (max 20 characters)",
       ],
       companyRegistrationRules: [
         (v) =>
-           !v || /^[a-zA-Z0-9]{1,25}$/.test(v) || "Only letters and numbers are allowed (max 25 characters)",
+          !v ||
+          /^[a-zA-Z0-9]{1,25}$/.test(v) ||
+          "Only letters and numbers are allowed (max 25 characters)",
       ],
       incorportationCountryRules: [
-        (v) => !v || /^[a-zA-Z]{1,16}$/.test(v) || "Only letters are allowed (max 16 characters)",
+        (v) =>
+          !v ||
+          /^[a-zA-Z]{1,16}$/.test(v) ||
+          "Only letters are allowed (max 16 characters)",
       ],
       FileUploadrules: [
         (v) =>
@@ -1195,7 +1212,7 @@ export default {
           "getDocumentInfoForAdmin",
           payloadApproveIdentity
         );
-        
+
         let username = {
           name: response.name,
         };
@@ -1520,7 +1537,6 @@ export default {
             });
             this.submitLoader = false;
           }
-
         } else {
           this.$root.$emit("SHOW_SNACKBAR", {
             text: "Please upload documents!",

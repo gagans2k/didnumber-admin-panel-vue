@@ -313,7 +313,7 @@ import editAssigningNumberDilaog from "./editAssigningNumberDilaog";
 import showRemoveDidDialog from "./removeDidDialog";
 import showSwitchServerDialog from "./switchServerDialog";
 import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
+import "@/assets/vue-loading.css";
 
 export default {
   name: "debitDetailsTable",

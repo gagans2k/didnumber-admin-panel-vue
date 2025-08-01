@@ -27,7 +27,6 @@
                         placeholder="First Name"
                         required
                         outlined
-                        
                         append-icon="person"
                       ></v-text-field>
                     </v-col>
@@ -37,7 +36,6 @@
                         placeholder="Last Name"
                         required
                         outlined
-                        
                         append-icon="person"
                       ></v-text-field>
                     </v-col>
@@ -48,7 +46,6 @@
                         placeholder="Email"
                         required
                         outlined
-                        
                         append-icon="email"
                       ></v-text-field>
                     </v-col>
@@ -62,7 +59,6 @@
                         placeholder="Password"
                         required
                         outlined
-                        
                         append-icon="remove_red_eye"
                       ></v-text-field>
                     </v-col>
@@ -75,7 +71,6 @@
                         placeholder="Confirm Password"
                         required
                         outlined
-                        
                         append-icon="remove_red_eye"
                       ></v-text-field>
                     </v-col>
@@ -86,7 +81,6 @@
                         placeholder="Address 1"
                         required
                         outlined
-                        
                         append-icon="home"
                       ></v-text-field>
                     </v-col>
@@ -97,7 +91,6 @@
                         placeholder="Address 2"
                         required
                         outlined
-                        
                         append-icon="home_work"
                       ></v-text-field>
                     </v-col>
@@ -108,7 +101,6 @@
                         :items="countryData"
                         required
                         outlined
-                        
                         @change="getStateList(signupData.country)"
                         append-icon="business"
                       ></v-autocomplete>
@@ -122,7 +114,6 @@
                         append-icon="location_on"
                         required
                         outlined
-                        
                       ></v-autocomplete>
                     </v-col>
                     <v-col cols="12" sm="12" md="4 pr-md-2">
@@ -131,7 +122,6 @@
                         placeholder="City"
                         required
                         outlined
-                        
                         append-icon="location_city"
                       ></v-text-field>
                     </v-col>
@@ -143,7 +133,6 @@
                         counter="6"
                         required
                         outlined
-                        
                         append-icon="pin_drop"
                       ></v-text-field>
                     </v-col>
@@ -157,7 +146,6 @@
                         class="mb-0 pb-0"
                         required
                         outlined
-                        
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -242,7 +230,7 @@ export default {
         this.$store.dispatch("STORE_SIGNUP_DATA", this.signupData);
       } catch (error) {
         this.$root.$emit("SHOW_SNACKBAR", {
-          text: err.data.messageDetail,
+          text: error.data.messageDetail,
           color: "error",
         });
       }
@@ -253,6 +241,7 @@ export default {
         let response = await countryStateAPI.getCountryList();
         this.countryData = response.countryList;
       } catch (error) {
+        console.error("Error fetching country list:", error);
       }
     },
 
@@ -262,6 +251,7 @@ export default {
         let response = await countryStateAPI.getStateList(this.countryGeoId);
         this.stateData = response.stateList;
       } catch (error) {
+        console.error("Error fetching state list:", error);
       }
     },
 

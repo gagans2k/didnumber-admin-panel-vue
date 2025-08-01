@@ -1,19 +1,16 @@
 <template>
-  <div id="app-root">
+  <div id="app">
     <template v-if="isAuthenticated()">
       <v-app>
-        <!-- Navigation drawer -->
-        <app-drawer></app-drawer>
-        <v-main class="page-content">
-          <!-- Header toolbar -->
-          <app-toolbar></app-toolbar>
-          <template v-if="checkSession()">
-          </template>
-          <v-container fluid>
-            <router-view :key="$route.fullPath"></router-view>
-          </v-container>
+        <AppDrawer
+          :menus="menus"
+          :drawer="drawer"
+          @update:drawer="drawer = $event"
+        />
+        <AppToolbar :drawer="drawer" @update:drawer="drawer = $event" />
+        <v-main>
+          <router-view></router-view>
         </v-main>
-
         <v-snackbar
           timeout="3000"
           top
@@ -29,17 +26,17 @@
       <transition>
         <keep-alive>
           <router-view></router-view>
-          <v-snackbar
-            timeout="3000"
-            top
-            right
-            :color="snackbar.color"
-            v-model="snackbar.show"
-          >
-            {{ snackbar.text }}
-          </v-snackbar>
         </keep-alive>
       </transition>
+      <v-snackbar
+        timeout="3000"
+        top
+        right
+        :color="snackbar.color"
+        v-model="snackbar.show"
+      >
+        {{ snackbar.text }}
+      </v-snackbar>
     </template>
   </div>
 </template>
@@ -47,59 +44,72 @@
 <script>
 import AppDrawer from "@/components/pageHeader/app-drawer";
 import AppToolbar from "@/components/pageHeader/app-toolbar";
-// import ThemeSettings from "@/components/theme-settings";
 import menu from "@/side-nav/menu";
+import { useMainStore } from "@/store";
+import { computed, inject, onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
   components: {
     AppDrawer,
     AppToolbar,
-    // ThemeSettings
   },
-  data: () => ({
-    menus: [],
-    snackbar: {
+
+  setup() {
+    const router = useRouter();
+    const store = useMainStore();
+    const eventBus = inject("eventBus");
+
+    const menus = ref([]);
+    const drawer = ref(true);
+    const snackbar = ref({
       show: false,
       text: "",
-      color: ""
-    },
-  }),
+      color: "",
+    });
 
+    const isIdle = computed(() => store.isIdle);
 
-  computed: {
-    isIdle() {    
-      return this.$store.state.idleVue.isIdle;
-    }
-  },
-
-  methods: {
-    isAuthenticated() {
+    const isAuthenticated = () => {
       return localStorage.getItem("auth");
-    },
-    checkSession(){
-      if(this.$store.state.idleVue.isIdle){        
+    };
+
+    const checkSession = () => {
+      if (store.isIdle) {
         localStorage.clear();
-        this.$router.push({
-            name: 'Login'
+        router.push({
+          name: "Login",
         });
       }
-    }
-  },
+    };
 
-  mounted() {
-    
-    this.menus = menu;
-    this.$root.$on("SHOW_SNACKBAR", (data) => {
-      this.snackbar = {
+    const showSnackbar = (data) => {
+      snackbar.value = {
         show: true,
         text: data.text,
         color: data.color,
       };
+    };
+
+    onMounted(() => {
+      menus.value = menu;
+
+      // Listen for snackbar events
+      if (eventBus) {
+        eventBus.on("SHOW_SNACKBAR", showSnackbar);
+      }
     });
+
+    return {
+      menus,
+      drawer,
+      snackbar,
+      isIdle,
+      isAuthenticated,
+      checkSession,
+    };
   },
 };
 </script>
 
-<style>
-
-</style>
+<style></style>

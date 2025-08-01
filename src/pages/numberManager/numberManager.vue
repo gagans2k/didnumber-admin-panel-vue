@@ -70,7 +70,7 @@ import numberManagerAPI from "@/services/numberManagerAPI.js";
 import numberSubscriptionDataTable from "./numberSubscriptionDataTable.vue";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
+import "@/assets/vue-loading.css";
 
 export default {
   name: "numberManage",

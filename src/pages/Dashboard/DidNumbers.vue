@@ -532,7 +532,7 @@
 import AllApiCalls from "@/services/AllApiCalls";
 import productStore from "../../services/productStore";
 import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
+import "@/assets/vue-loading.css";
 import numberManagerAPI from "@/services/numberManagerAPI.js";
 
 export default {

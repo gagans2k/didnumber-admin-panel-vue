@@ -241,7 +241,7 @@
 import AllApiCalls from "@/services/AllApiCalls";
 import countryStateAPI from "@/services/countryStateAPI.js";
 import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
+import "@/assets/vue-loading.css";
 export default {
   mixins: [AllApiCalls],
   components: {

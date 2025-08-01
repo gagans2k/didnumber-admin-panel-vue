@@ -78,103 +78,85 @@
         </v-list-group>
       </template>
     </v-list>
-
-    <!-- <v-dialog v-model="showImageDialog" max-width="50%" persistent>
-      <v-card flat class="Card-style pa-2">
-        <v-container fluid>
-          <v-card-title>Profile Picture</v-card-title>
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-layout class="form-field">
-                <v-flex sm12>
-                  <v-btn @click="toProfileImage" color="primary" depressed>
-                    Select Image
-                  </v-btn>
-                </v-flex>
-              </v-layout>
-              <v-layout class="form-field">
-                <v-flex sm12>
-                  <v-btn
-                    @click="showImageDialog = false"
-                    color="error"
-                    depressed
-                    >Cancel</v-btn
-                  >
-                </v-flex>
-              </v-layout>
-            </v-col>
-            <v-col cols="12" md="6">
-              <img
-                :src="userData.profileImageData"
-                onerror="this.src='/images/user.png';"
-                style="width: 90%"
-              />
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card>
-    </v-dialog> -->
   </v-navigation-drawer>
 </template>
 
 <script>
+import { ref, reactive, onMounted, inject } from 'vue';
+import { useRouter } from 'vue-router';
 import menu from "@/side-nav/menu";
 import profileAPI from "@/services/profileAPI.js";
 import dummyImg from "../../assets/images/dummyProfile.jpeg";
 
 export default {
   name: "app-drawer",
-  data: () => ({
-    barColor: "rgba(0, 0, 0, .8), rgba(0, 0, 0, .8)",
+  
+  setup() {
+    const router = useRouter();
+    const eventBus = inject('eventBus');
+    
+    const mini = ref(false);
+    const drawer = ref(true);
+    const menus = ref([]);
+    const userData = reactive({});
+    const showImageDialog = ref(false);
+    const checkImg = ref("");
+    const userDetail = ref(null);
 
-    mini: false,
-    drawer: true,
-    menus: [],
-    userData: {},
-    dummyImg: dummyImg,
-    showImageDialog: false,
-    checkImg: "",
-  }),
-  methods: {
-    logout() {
+    const logout = () => {
       localStorage.clear();
-      this.$router.push("/login");
-    },
-    toProfileImage() {
-      this.showImageDialog = false;
-      this.$router.push("/profileimage");
-    },
-    async getUserDetail() {
-      let userData = {
-        accountId: this.userDetail.accountId,
-        userId: this.userDetail.userId,
+      router.push("/login");
+    };
+
+    const toProfileImage = () => {
+      showImageDialog.value = false;
+      router.push("/profileimage");
+    };
+
+    const getUserDetail = async () => {
+      let userDataParam = {
+        accountId: userDetail.value.accountId,
+        userId: userDetail.value.userId,
       };
       try {
-        let response = await profileAPI.getUserDetail(userData);
-        this.userData = response.userDetail;
-        this.checkImg = response.profileImageData;
-        this.userData.profileImageData = `data:image/jpg;base64,${response.profileImageData}`;
+        let response = await profileAPI.getUserDetail(userDataParam);
+        Object.assign(userData, response.userDetail);
+        checkImg.value = response.profileImageData;
+        userData.profileImageData = `data:image/jpg;base64,${response.profileImageData}`;
       } catch (error) {}
-    },
-  },
+    };
 
-  created() {
-    this.menus = menu.userMenu;
-  },
+    onMounted(() => {
+      menus.value = menu.userMenu;
+      userDetail.value = JSON.parse(localStorage.getItem("userDetail"));
+      getUserDetail();
+      
+      // Listen for events using the new event bus
+      if (eventBus) {
+        eventBus.on("CHANGE_PROFILE_DATA", (data) => {
+          userData.name = data.name;
+        });
+        eventBus.on("CHANGE_PROFILE_IMAGE", (data) => {
+          userData.profileImageData = data.imageData;
+        });
+        eventBus.on("TOGGLE_DRAWER", () => {
+          drawer.value = !drawer.value;
+        });
+      }
+    });
 
-  mounted() {
-    this.userDetail = JSON.parse(localStorage.getItem("userDetail"));
-    this.getUserDetail();
-    this.$root.$on("CHANGE_PROFILE_DATA", (data) => {
-      this.userData.name = data.name;
-    });
-    this.$root.$on("CHANGE_PROFILE_IMAGE", (data) => {
-      this.userData.profileImageData = data.imageData;
-      this.$forceUpdate();
-    });
-    this.$root.$on("TOGGLE_DRAWER", () => {
-      this.drawer = !this.drawer;
-    });
-  },
+    return {
+      mini,
+      drawer,
+      menus,
+      userData,
+      dummyImg,
+      showImageDialog,
+      checkImg,
+      logout,
+      toProfileImage,
+      getUserDetail
+    };
+  }
 };
 </script>

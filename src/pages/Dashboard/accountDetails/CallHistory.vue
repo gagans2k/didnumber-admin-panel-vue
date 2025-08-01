@@ -96,7 +96,7 @@
               </span>
             </template>
             <template v-slot:[`item.cost`]="{ item }">
-              {{ item.cost | getDollarValue }} +
+              {{ formatDollarValue(item.cost) }} +
             </template>
           </v-data-table>
         </v-card>
@@ -138,7 +138,7 @@
               </span>
             </template>
             <template v-slot:[`item.cost`]="{ item }">
-              {{ item.cost | getDollarValue }} +
+              {{ formatDollarValue(item.cost) }} +
             </template>
           </v-data-table>
         </v-card>
@@ -180,7 +180,7 @@
               </span>
             </template>
             <template v-slot:[`item.cost`]="{ item }">
-              {{ item.cost | getDollarValue }} +
+              {{ formatDollarValue(item.cost) }} +
             </template>
           </v-data-table>
         </v-card>
@@ -308,7 +308,7 @@
               </span>
             </template>
             <template v-slot:[`item.cost`]="{ item }">
-              {{ item.cost | getDollarValue }} +
+              {{ formatDollarValue(item.cost) }} +
             </template>
           </v-data-table>
         </v-card>
@@ -319,10 +319,10 @@
 </template>
 <script>
 //import cdrAPI from "@/services/cdrAPI.js";
+import "@/assets/vue-loading.css";
+import AllApiCalls from "@/services/AllApiCalls";
 import moment from "moment";
 import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
-import AllApiCalls from "@/services/AllApiCalls";
 export default {
   mixins: [AllApiCalls],
   components: {
@@ -453,6 +453,10 @@ export default {
   },
 
   methods: {
+    formatDollarValue(cost) {
+      var getDollarCost = cost / 10000;
+      return parseFloat(getDollarCost.toFixed(4));
+    },
     createDate(dateType) {
       this.datePicker.To = new Date();
       this.datePicker.From = new Date();

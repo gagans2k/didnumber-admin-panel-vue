@@ -21,7 +21,7 @@
         <v-col cols="12" sm="4">
           <v-card-subtitle class="pa-0"> Date Of Birth: </v-card-subtitle>
           <v-card-title class="pa-0">
-            {{ userDocumentInfo.dateOfBirth | setDateFormat }}
+            {{ formatDate(userDocumentInfo.dateOfBirth) }}
           </v-card-title>
         </v-col>
         <v-col cols="12" sm="4">
@@ -86,40 +86,55 @@
           </v-card-title>
         </v-col>
 
-        <v-col cols="12" sm="4" v-if="userDocumentInfo.documentInfoType == 'BUSINESS'">
+        <v-col
+          cols="12"
+          sm="4"
+          v-if="userDocumentInfo.documentInfoType == 'BUSINESS'"
+        >
           <v-card-subtitle class="pa-0"> Company Name: </v-card-subtitle>
           <v-card-title class="pa-0">
             {{ userDocumentInfo.companyName }}
           </v-card-title>
         </v-col>
 
-
-        <v-col cols="12" sm="4" v-if="userDocumentInfo.documentInfoType == 'BUSINESS'">
-          <v-card-subtitle class="pa-0"> Company Registration Number: </v-card-subtitle>
+        <v-col
+          cols="12"
+          sm="4"
+          v-if="userDocumentInfo.documentInfoType == 'BUSINESS'"
+        >
+          <v-card-subtitle class="pa-0">
+            Company Registration Number:
+          </v-card-subtitle>
           <v-card-title class="pa-0">
             {{ userDocumentInfo.companyRegistrationNumber }}
           </v-card-title>
         </v-col>
 
-        <v-col cols="12" sm="4" v-if="userDocumentInfo.documentInfoType == 'BUSINESS'">
+        <v-col
+          cols="12"
+          sm="4"
+          v-if="userDocumentInfo.documentInfoType == 'BUSINESS'"
+        >
           <v-card-subtitle class="pa-0"> Vat Id: </v-card-subtitle>
           <v-card-title class="pa-0">
             {{ userDocumentInfo.vatId }}
           </v-card-title>
         </v-col>
 
-
         <v-col cols="12" sm="4">
-          <v-card-subtitle class="pa-0"> Incorporation Company: </v-card-subtitle>
+          <v-card-subtitle class="pa-0">
+            Incorporation Company:
+          </v-card-subtitle>
           <v-card-title class="pa-0">
             {{ userDocumentInfo.incorporationCompany }}
           </v-card-title>
         </v-col>
-      
-       <v-col cols="12" sm="4">
+
+        <v-col cols="12" sm="4">
           <v-card-subtitle class="pa-0">Contact Number: </v-card-subtitle>
           <v-card-title class="pa-0">
-            {{ userDocumentInfo.countryCode }} - {{ userDocumentInfo.contactNumber }}
+            {{ userDocumentInfo.countryCode }} -
+            {{ userDocumentInfo.contactNumber }}
           </v-card-title>
         </v-col>
       </v-row>
@@ -152,7 +167,11 @@
                     color="blue"
                     class="ml-2"
                     @click="
-                      downloadFile(document.base64, document.fileName, document.mimeTypeId)
+                      downloadFile(
+                        document.base64,
+                        document.fileName,
+                        document.mimeTypeId
+                      )
                     "
                     >mdi-download</v-icon
                   >
@@ -218,7 +237,6 @@
 </template>
 
 <script>
-import moment from "moment";
 export default {
   props: ["userDocumentInfo"],
   data() {
@@ -229,18 +247,15 @@ export default {
       documentMimeTypeId: "",
     };
   },
-  filters: {
-    setDateFormat(dob) {
+  methods: {
+    formatDate(dob) {
       if (dob) {
         // Convert PostgreSQL timestamp to a valid date string
-        const dateString = moment(dob).format("YYYY-MM-DD");
-        return dateString;
-      } else {
-        return "-";
+        const date = new Date(dob);
+        return date.toLocaleDateString();
       }
+      return "";
     },
-  },
-  methods: {
     closeUserDialog() {
       this.$emit("close-user-modal");
     },
@@ -252,7 +267,7 @@ export default {
       this.showImageModal = true;
     },
     downloadFile(base64, fileName, mimeType) {
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = `data:${mimeType};base64,${base64}`;
       link.download = fileName;
       link.click();
@@ -260,7 +275,6 @@ export default {
   },
 };
 </script>
-
 
 <style>
 .cursor-pointer {
