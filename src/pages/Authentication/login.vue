@@ -15,7 +15,6 @@
                   name="email"
                   prepend-icon="mdi-email"
                   type="email"
-                  :rules="emailRules"
                   required
                 />
                 <v-text-field

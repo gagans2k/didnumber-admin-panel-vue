@@ -73,9 +73,10 @@
     <v-row>
       <v-col xs="12">
         <v-data-table
-          :headers="headers"
+          v-model:options="options"
+
+          :headers="headers.text"
           :items="items"
-          :options.sync="options"
           :server-items-length="totalItems"
           :footer-props="{
             'items-per-page-options': [10, 20, 30]
@@ -213,6 +214,7 @@ export default {
         {
           text: "S.No",
           align: "start",
+          key : "indexNo",
           value: "indexNo",
           sortable: false 
         },
@@ -230,13 +232,18 @@ export default {
         { text: "Number's", value: "viewNumber", sortable: false },
         { text: "Order's", value: "viewOrders", sortable: false },
         { text: "Current Amount", value: "currentAmount", width: "10%", sortable: false  },
-        { text: "Account Detail's", value: "accountDetails", sortable: false },
+        //{ text: "Account Detail's", value: "accountDetails", sortable: false },
         { text: "Verified", value: "isVerified", sortable: false }
 
       ],
       totalItems: 0,
-      options: {},
-      switchValue: "",
+       options: {
+      page: 1,
+      itemsPerPage: 10,
+      sortBy: [],
+      sortDesc: [],
+    },
+      switchValue: ""
     };
   },
   watch: {
@@ -295,13 +302,14 @@ export default {
       }
     },
   },
-  // async mounted() {
-  //   const { items, total } = await this.getDataFromApi();
-  //   this.items = items;
-  //   this.totalItems = total;
-  // },
+  async mounted() {
+     const { items, total } = await this.getDataFromApi();
+     this.items = items;
+     this.totalItems = total;
+  },
   methods: {
     async getDataFromApi() {
+      this.isLoading = true;
       return new Promise(async (resolve, reject) => {
         const { sortBy, sortDesc} = this.options;
         let response = await this.getMethod("getPartyandPersonList", {
@@ -313,7 +321,8 @@ export default {
         });
         this.items = response.accountList;
         this.totalItems = response.listSize;
-        if (sortBy.length === 1 && sortDesc.length === 1) {
+        console.log(this.totalItems+ "::::::totalItems::::::::::::::::items::::::::::::"+this.items);
+if (Array.isArray(sortBy) && Array.isArray(sortDesc) && sortBy.length > 0) {
           items = items.sort((a, b) => {
             const sortA = a[sortBy[0]];
             const sortB = b[sortBy[0]];
@@ -329,6 +338,7 @@ export default {
             }
           });
         }
+        this.isLoading = false;
 
         // if (itemsPerPage > 0) {
         //   var items = items.slice((page - 1) * itemsPerPage, page * itemsPerPage);
@@ -367,6 +377,33 @@ export default {
       }
     },
 
+  async toggleEnabled(item) {
+    const action = item.enabledBool ? "enabled" : "disabled";
+    this.isLoading = true;
+    let response;
+
+    if (action === "enabled") {
+      response = await this.postMethod("enableUser", {
+        emailAddress: item.emailAddress,
+        accountId: item.accountId,
+      });
+    } else {
+      response = await this.postMethod("disableUser", {
+        emailAddress: item.emailAddress,
+        accountId: item.accountId,
+      });
+    }
+
+    if (response.responseMessage === "success") {
+      // Update the Y/N value too so backend stays in sync
+      item.enabled = item.enabledBool ? "Y" : "N";
+    } else {
+      // rollback toggle if API failed
+      item.enabledBool = !item.enabledBool;
+    }
+    this.isLoading = false;
+  },
+
     async verifiedAccountForPayment(message, item) {
       if (message == "disabled") {
        this.isLoading = true;
@@ -390,22 +427,7 @@ export default {
           this.isLoading = false;
         }
       }
-    },
-
-    // async getDataFromServer(sortBy, sortDesc, page, itemsPerPage) {
-    //   let response = await this.getMethod("getPartyandPersonList", {
-    //     viewIndex: page,
-    //     viewSize: itemsPerPage,
-    //     customerName: this.search,
-    //     emailAddress: this.email,
-    //   });
-    //           setTimeout(() => {
-
-
-    //     }, 3000);
-    //   this.items = response.data.accountList;
-    //   this.totalItems = response.data.listSize;
-    // },
+    }
   },
 };
 </script>
